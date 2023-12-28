@@ -55,10 +55,11 @@ public class BotUtil implements Constants {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    public int extractPerformanceId(String callBackData) {
+    public int extractId(String callBackData) {
         return Integer.parseInt(callBackData
                 .replace(CBD_SELECTED_PERFORMANCE_ID_, "")
-                .replace(CBD_ACCEPTED_PERFORMANCE_ID_, ""));
+                .replace(CBD_ACCEPTED_PERFORMANCE_ID_, "")
+                .replace(CBD_GET_TICKET_ID_, ""));
     }
 
     public boolean isPhoneNumberInvalid(String phoneNumber) {

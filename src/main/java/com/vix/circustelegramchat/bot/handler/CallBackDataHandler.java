@@ -61,7 +61,7 @@ public class CallBackDataHandler implements Constants {
     private EditMessageText performanceAccepted(Customer customer, Message message, String callBackData) {
         ticketService.save(Ticket.builder()
                 .customerId(customer.getId())
-                .performanceId(botUtil.extractPerformanceId(callBackData))
+                .performanceId(botUtil.extractId(callBackData))
                 .build());
 
         String text = answerTextMaker.ticketOrdered();
@@ -70,7 +70,7 @@ public class CallBackDataHandler implements Constants {
     }
 
     private EditMessageText performanceSelected(Customer customer, Message message, String callBackData) {
-        int performanceId = botUtil.extractPerformanceId(callBackData);
+        int performanceId = botUtil.extractId(callBackData);
         Performance performance = performanceService.findById(performanceId);
         String text = answerTextMaker.performanceSelected(customer, performance);
         List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptationButtons(performanceId);
