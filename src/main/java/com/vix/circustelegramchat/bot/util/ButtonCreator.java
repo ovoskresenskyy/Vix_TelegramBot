@@ -49,6 +49,10 @@ public class ButtonCreator implements Constants {
         return getButton(BUTTON_ACCEPT, CBD_ACCEPTED_PERFORMANCE_ID_ + id);
     }
 
+    public InlineKeyboardButton getTicketButton(int id){
+        return getButton(BUTTON_GET_TICKET, CBD_GET_TICKET_ID_ + id);
+    }
+
     public InlineKeyboardButton getCustomButton(String text, String callBackData){
         return getButton(text, callBackData);
     }

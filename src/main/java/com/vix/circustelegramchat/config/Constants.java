@@ -35,6 +35,7 @@ public interface Constants {
     String CBD_SELECTED_PERFORMANCE_ID_ = "CBD_SELECTED_PERFORMANCE_ID_";
     String CBD_ACCEPTED_PERFORMANCE_ID_ = "CBD_ACCEPTED_PERFORMANCE_ID_";
 
+    String CBD_GET_TICKET_ID_ = "CBD_GET_TICKET_ID_";
     String CBD_REGISTRATION_INPUT_ACCEPT = "CBD_REGISTRATION_INPUT_ACCEPT";
 
     String CBD_ORDER_OFFER_YES = "CBD_ORDER_OFFER_YES";
@@ -53,6 +54,7 @@ public interface Constants {
     String BUTTON_CHAT_WITH_OPERATOR = "Chat with operator";
 
     String BUTTON_ACCEPT = "Accept";
+    String BUTTON_GET_TICKET = "Get ticket";
     String BUTTON_BACK_TO_PERFORMANCES = "Back to performances";
 
     String BUTTON_SHOW_PREVIOUS_DATE = "< Show previous date";
