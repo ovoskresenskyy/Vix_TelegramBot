@@ -59,13 +59,13 @@ public class CallBackDataHandler implements Constants {
     }
 
     private EditMessageText performanceAccepted(Customer customer, Message message, String callBackData) {
-        ticketService.save(Ticket.builder()
+        Ticket ticket = ticketService.save(Ticket.builder()
                 .customerId(customer.getId())
                 .performanceId(botUtil.extractId(callBackData))
                 .build());
-
         String text = answerTextMaker.ticketOrdered();
-        List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getMainMenuButtons();
+        List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptedButtons(ticket.getId());
+
         return botUtil.initNewEditMessageText(message, text, keyboard);
     }
 
