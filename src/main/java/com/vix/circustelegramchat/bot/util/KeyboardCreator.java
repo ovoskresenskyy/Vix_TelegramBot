@@ -19,9 +19,6 @@ public class KeyboardCreator implements Constants {
     private final PerformanceService performanceService;
     private final ButtonCreator buttonCreator;
 
-    private final List<InlineKeyboardButton> backToMainMenuButton = List.of(
-            buttonCreator.getMainMenuButton());
-
     public List<List<InlineKeyboardButton>> getMainMenuButtons() {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(List.of(
@@ -48,12 +45,18 @@ public class KeyboardCreator implements Constants {
         return buttons;
     }
 
+    public List<List<InlineKeyboardButton>> getPerformanceAcceptedButtons(int ticketId) {
+        InlineKeyboardButton getTicketButton = buttonCreator.getTicketButton(ticketId);
+        InlineKeyboardButton backToMainMenuButton = buttonCreator.getMainMenuButton();
+        return List.of(List.of(getTicketButton, backToMainMenuButton));
+    }
+
     public List<List<InlineKeyboardButton>> getPerformanceKeyboard(LocalDate performanceDate) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         List<Performance> performances = performanceService.getPerformancesByDate(performanceDate);
         buttons.add(getPerformanceButtons(performances));
         buttons.add(getNavigationButtons(performanceDate));
-        buttons.add(backToMainMenuButton);
+        buttons.add(getBackToMainMenuButton());
 
         return buttons;
     }
@@ -94,8 +97,12 @@ public class KeyboardCreator implements Constants {
                 buttonCreator.getMainMenuButton()));
     }
 
-    public List<List<InlineKeyboardButton>> getBackToMainMenuButton() {
-        return List.of(backToMainMenuButton);
+    public List<InlineKeyboardButton> getBackToMainMenuButton() {
+        return List.of(buttonCreator.getMainMenuButton());
+    }
+
+    public List<List<InlineKeyboardButton>> getBackToMainMenuKeyboard() {
+        return List.of(getBackToMainMenuButton());
     }
 
 }

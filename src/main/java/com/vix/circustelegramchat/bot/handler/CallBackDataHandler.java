@@ -122,7 +122,7 @@ public class CallBackDataHandler implements Constants {
         if (customer.getState().equals(STATE_EMPTY)) {
             return botUtil.initNewEditMessageText(message,
                     TEXT_UNREGISTERED_USER_DATA,
-                    keyboardCreator.getBackToMainMenuButton());
+                    keyboardCreator.getBackToMainMenuKeyboard());
         } else {
             return botUtil.initNewEditMessageText(message,
                     customer.toString(),
