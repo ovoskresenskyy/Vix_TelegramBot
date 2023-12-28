@@ -1,8 +1,8 @@
 package com.vix.circustelegramchat.bot.handler;
 
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.config.Constants;
@@ -41,32 +41,42 @@ public class DocumentSender implements Constants {
     private SendDocument getTicket(Customer customer, String callBackData) {
         Ticket ticket = ticketService.findById(botUtil.extractId(callBackData));
         Performance performance = performanceService.findById(ticket.getPerformanceId());
+        File pdfTicket = getPDFTicket(ticket.getId(), customer, performance);
 
-        Document ticketDPF = new Document();
-        File file = new File(getTicketName(customer, performance));
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            PdfWriter.getInstance(ticketDPF, fileOutputStream);
+        return SendDocument.builder()
+                .chatId(customer.getChatId())
+                .document(new InputFile(pdfTicket))
+                .build();
+    }
+
+    private File getPDFTicket(int ticketId, Customer customer, Performance performance) {
+
+        Document document = new Document();
+        File ticketPDF = new File(getTicketName(ticketId, performance));
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(ticketPDF);
+            PdfWriter.getInstance(document, fileOutputStream);
         } catch (DocumentException | IOException e) {
             log.error("Error occurred: " + e.getMessage());
         }
 
-        fillTheTicket(ticketDPF, getTicketText(customer, performance));
+        document.open();
+        String ticketText = getTicketText(customer, performance);
+        fillTheTicket(document, ticketText);
+        document.close();
 
-        return SendDocument.builder()
-                .chatId(customer.getChatId())
-                .document(new InputFile(file))
-                .build();
+        return ticketPDF;
     }
 
-    private void fillTheTicket(Document ticket, String text) {
-        ticket.open();
-        Chunk chunk = new Chunk(text);
+    private void fillTheTicket(Document document, String text) {
+        Paragraph p = new Paragraph();
+        p.add(text);
         try {
-            ticket.add(chunk);
+            document.add(p);
         } catch (DocumentException e) {
             log.error("Error occurred: " + e.getMessage());
         }
-        ticket.close();
+
     }
 
     private String getTicketText(Customer customer, Performance performance) {
@@ -79,12 +89,12 @@ public class DocumentSender implements Constants {
 
     }
 
-    private String getTicketName(Customer customer, Performance performance) {
-        return customer.getFirstName()
-                + "_" + customer.getLastName()
+    private String getTicketName(int ticketId, Performance performance) {
+        return "tickets"
+                + File.separator
+                + ticketId
                 + "_" + performance.getName()
                 + "_" + performance.getDate()
-                + "_" + performance.getTime()
                 + ".pdf";
     }
 }
