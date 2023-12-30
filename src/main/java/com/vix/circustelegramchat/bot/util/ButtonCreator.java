@@ -21,15 +21,15 @@ public class ButtonCreator implements Constants {
     }
 
     public InlineKeyboardButton getChangeFirstNameButton(){
-        return getButton(BUTTON_CHANGE_FIRST_NAME, CBD_BUTTON_CHANGE_FIRST_NAME);
+        return getButton(BUTTON_CHANGE_FIRST_NAME, CBD_CHANGE_FIRST_NAME);
     }
 
     public InlineKeyboardButton getChangeLastNameButton(){
-        return getButton(BUTTON_CHANGE_LAST_NAME, CBD_BUTTON_CHANGE_LAST_NAME);
+        return getButton(BUTTON_CHANGE_LAST_NAME, CBD_CHANGE_LAST_NAME);
     }
 
     public InlineKeyboardButton getChangePhoneNumberButton(){
-        return getButton(BUTTON_CHANGE_PHONE_NUMBER, CBD_BUTTON_CHANGE_PHONE_NUMBER);
+        return getButton(BUTTON_CHANGE_PHONE_NUMBER, CBD_CHANGE_PHONE_NUMBER);
     }
 
     public InlineKeyboardButton getBackToPerformancesButton(){

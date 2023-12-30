@@ -10,9 +10,15 @@ public interface Constants {
     Pattern NAME_FORMAT = Pattern.compile("[A-Z](?=.{1,29}$)[A-Za-z]+( [A-Z][A-Za-z]+)*");
 
     String STATE_EMPTY = "EMPTY";
-    String STATE_REGISTRATION_STARTED = "REGISTRATION_STARTED";
-    String STATE_PHONE_NUMBER_ENTERED = "PHONE_NUMBER_ENTERED";
-    String STATE_FIRST_NAME_ENTERED = "FIRST_NAME_ENTERED";
+
+    String STATE_PHONE_NUMBER_ENTERING = "PHONE_NUMBER_ENTERING";
+    String STATE_FIRST_NAME_ENTERING = "FIRST_NAME_ENTERING";
+    String STATE_LAST_NAME_ENTERING = "LAST_NAME_ENTERING";
+
+    String STATE_PHONE_NUMBER_CHANGING = "PHONE_NUMBER_CHANGING";
+    String STATE_FIRST_NAME_CHANGING = "FIRST_NAME_CHANGING";
+    String STATE_LAST_NAME_CHANGING = "LAST_NAME_CHANGING";
+
     String STATE_REGISTERED = "REGISTERED";
 
     /**
@@ -36,9 +42,9 @@ public interface Constants {
     String CBD_SHOW_MY_TICKETS = "CBD_SHOW_MY_TICKETS";
 
     String CBD_CHANGE_MY_DATA = "CBD_CHANGE_MY_DATA";
-    String CBD_BUTTON_CHANGE_FIRST_NAME = "CBD_BUTTON_CHANGE_FIRST_NAME";
-    String CBD_BUTTON_CHANGE_LAST_NAME = "CBD_BUTTON_CHANGE_LAST_NAME";
-    String CBD_BUTTON_CHANGE_PHONE_NUMBER = "CBD_BUTTON_CHANGE_PHONE_NUMBER";
+    String CBD_CHANGE_FIRST_NAME = "CBD_CHANGE_FIRST_NAME";
+    String CBD_CHANGE_LAST_NAME = "CBD_CHANGE_LAST_NAME";
+    String CBD_CHANGE_PHONE_NUMBER = "CBD_CHANGE_PHONE_NUMBER";
 
 
     String CBD_CHAT_WITH_OPERATOR = "CBD_CHAT_WITH_OPERATOR";
@@ -83,6 +89,10 @@ public interface Constants {
     String TEXT_REGISTRATION_PHONE_NUMBER = """
             To get started you have to register.
             Enter please your phone number in XXXYYYYYYY format.""";
+
+    String TEXT_PHONE_NUMBER_CHANGING = "Please enter your new phone number in XXXYYYYYYY format.";
+    String TEXT_FIRST_NAME_CHANGING = "Please enter your new first name.";
+    String TEXT_LAST_NAME_CHANGING = "Please enter your new last name.";
     String TEXT_PHONE_NUMBER_NOT_VALID = """
             The number does not match the format.
             Please try again.""";

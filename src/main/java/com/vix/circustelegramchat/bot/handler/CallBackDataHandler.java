@@ -10,6 +10,7 @@ import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.service.PerformanceService;
 import com.vix.circustelegramchat.service.TicketService;
+import com.vix.circustelegramchat.service.VisitorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -27,12 +28,31 @@ public class CallBackDataHandler implements Constants {
     private final AnswerTextMaker answerTextMaker;
     private final PerformanceService performanceService;
     private final TicketService ticketService;
+    private final VisitorService visitorService;
 
     public EditMessageText handle(Visitor visitor, Message message, String callBackData) {
         return switch (callBackData) {
             case CBD_CHANGE_MY_DATA -> changeMyDataButtonPressed(message);
+            case CBD_CHANGE_FIRST_NAME -> changeFirstNameButtonPressed(visitor, message);
+            case CBD_CHANGE_LAST_NAME -> changeLastNameButtonPressed(visitor, message);
+            case CBD_CHANGE_PHONE_NUMBER -> changePhoneNumberButtonPressed(visitor, message);
             default -> customButtonPressed(visitor, message, callBackData);
         };
+    }
+
+    private EditMessageText changePhoneNumberButtonPressed(Visitor visitor, Message message) {
+        visitorService.changeState(visitor, STATE_PHONE_NUMBER_CHANGING);
+        return botUtil.initNewEditMessageText(message, TEXT_PHONE_NUMBER_CHANGING);
+    }
+
+    private EditMessageText changeLastNameButtonPressed(Visitor visitor, Message message) {
+        visitorService.changeState(visitor, STATE_LAST_NAME_CHANGING);
+        return botUtil.initNewEditMessageText(message, TEXT_LAST_NAME_CHANGING);
+    }
+
+    private EditMessageText changeFirstNameButtonPressed(Visitor visitor, Message message) {
+        visitorService.changeState(visitor, STATE_FIRST_NAME_CHANGING);
+        return botUtil.initNewEditMessageText(message, TEXT_FIRST_NAME_CHANGING);
     }
 
     private EditMessageText changeMyDataButtonPressed(Message message) {

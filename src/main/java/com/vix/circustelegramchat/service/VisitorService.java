@@ -29,9 +29,9 @@ public class VisitorService implements Constants {
 
     public void changeState(Visitor visitor, String state, String text) {
         switch (state) {
-            case STATE_PHONE_NUMBER_ENTERED -> visitor.setPhoneNumber(text);
-            case STATE_FIRST_NAME_ENTERED -> visitor.setFirstName(text);
-            case STATE_REGISTERED -> visitor.setLastName(text);
+            case STATE_PHONE_NUMBER_ENTERING -> visitor.setPhoneNumber(text);
+            case STATE_FIRST_NAME_ENTERING -> visitor.setFirstName(text);
+            case STATE_LAST_NAME_ENTERING -> visitor.setLastName(text);
         }
 
         visitor.setState(state);

@@ -63,7 +63,7 @@ public class TextHandler implements Constants {
         if (visitor.getState().equals(STATE_REGISTERED)) {
             return showUpcomingPerformances(visitor);
         } else {
-            visitorService.changeState(visitor, STATE_REGISTRATION_STARTED);
+            visitorService.changeState(visitor, STATE_PHONE_NUMBER_ENTERING);
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_REGISTRATION_PHONE_NUMBER));
         }
     }
@@ -89,9 +89,9 @@ public class TextHandler implements Constants {
 
     private List<SendMessage> handleUserInput(Visitor visitor, String text) {
         return switch (visitor.getState()) {
-            case STATE_REGISTRATION_STARTED -> handlePhoneNumberInput(visitor, text);
-            case STATE_PHONE_NUMBER_ENTERED -> handleFirstNameInput(visitor, text);
-            case STATE_FIRST_NAME_ENTERED -> handleLastNameInput(visitor, text);
+            case STATE_PHONE_NUMBER_ENTERING, STATE_PHONE_NUMBER_CHANGING -> handlePhoneNumberInput(visitor, text);
+            case STATE_FIRST_NAME_ENTERING, STATE_FIRST_NAME_CHANGING -> handleFirstNameInput(visitor, text);
+            case STATE_LAST_NAME_ENTERING, STATE_LAST_NAME_CHANGING -> handleLastNameInput(visitor, text);
             default -> unSupportedCommandReceived(visitor.getChatId());
         };
     }
@@ -104,7 +104,12 @@ public class TextHandler implements Constants {
         if (botUtil.isPhoneNumberInvalid(phoneNumber)) {
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_PHONE_NUMBER_NOT_VALID));
         }
-        visitorService.changeState(visitor, STATE_PHONE_NUMBER_ENTERED, phoneNumber);
+
+        if (isDataChanging(visitor.getState())) {
+            return updateVisitorData(visitor, phoneNumber);
+        }
+
+        visitorService.changeState(visitor, STATE_FIRST_NAME_ENTERING, phoneNumber);
 
         String text = answerTextMaker.phoneNumberEntered(phoneNumber);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -114,7 +119,12 @@ public class TextHandler implements Constants {
         if (botUtil.isNameInvalid(name)) {
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NAME_NOT_VALID));
         }
-        visitorService.changeState(visitor, STATE_FIRST_NAME_ENTERED, name);
+
+        if (isDataChanging(visitor.getState())) {
+            return updateVisitorData(visitor, name);
+        }
+
+        visitorService.changeState(visitor, STATE_LAST_NAME_ENTERING, name);
 
         String text = answerTextMaker.firstNameEntered(name);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -124,6 +134,11 @@ public class TextHandler implements Constants {
         if (botUtil.isNameInvalid(name)) {
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NAME_NOT_VALID));
         }
+
+        if (isDataChanging(visitor.getState())) {
+            return updateVisitorData(visitor, name);
+        }
+
         visitorService.changeState(visitor, STATE_REGISTERED, name);
 
         List<SendMessage> answers = new ArrayList<>();
@@ -144,6 +159,22 @@ public class TextHandler implements Constants {
         }
 
         return answers;
+    }
+
+    private List<SendMessage> updateVisitorData(Visitor visitor, String update) {
+        switch (visitor.getState()) {
+            case STATE_PHONE_NUMBER_CHANGING -> visitor.setPhoneNumber(update);
+            case STATE_FIRST_NAME_CHANGING -> visitor.setFirstName(update);
+            case STATE_LAST_NAME_CHANGING -> visitor.setLastName(update);
+        }
+        visitorService.changeState(visitor, STATE_REGISTERED);
+        return commandShowMyDataReceived(visitor);
+    }
+
+    private boolean isDataChanging(String state) {
+        return state.equals(STATE_PHONE_NUMBER_CHANGING)
+                || state.equals(STATE_FIRST_NAME_CHANGING)
+                || state.equals(STATE_LAST_NAME_CHANGING);
     }
 
     private List<SendMessage> showUpcomingPerformances(Visitor visitor) {
