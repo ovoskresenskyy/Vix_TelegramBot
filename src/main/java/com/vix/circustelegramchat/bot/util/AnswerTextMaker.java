@@ -10,6 +10,12 @@ import java.time.LocalDate;
 @Component
 public class AnswerTextMaker implements Constants {
 
+    public String welcomeText(Visitor visitor) {
+        return visitor.getState().equals(STATE_REGISTERED)
+                ? "Welcome " + visitor.getFullName()
+                : TEXT_WELCOME_UNREGISTERED;
+    }
+
     public String phoneNumberEntered(String phoneNumber) {
         return "Phone number " + phoneNumber + " was saved.\n\nNow please enter yor first name.";
     }
