@@ -133,9 +133,4 @@ public class CallBackDataHandler implements Constants {
                     keyboardCreator.getRegisteredUserShowDataButtons());
         }
     }
-
-    private EditMessageText showMyTicketsPressed(Message message) {
-        return botUtil.initNewEditMessageText(message, "show my tickets");
-    }
-
 }

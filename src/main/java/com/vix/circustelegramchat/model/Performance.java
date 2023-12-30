@@ -20,9 +20,14 @@ import java.time.LocalTime;
 public class Performance {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
     private LocalDate date;
     private LocalTime time;
+
+    @Override
+    public String toString() {
+        return name + "\n" + date + " " + time;
+    }
 }

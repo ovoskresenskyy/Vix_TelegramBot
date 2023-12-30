@@ -2,6 +2,7 @@ package com.vix.circustelegramchat.bot.handler;
 
 import com.vix.circustelegramchat.bot.util.AnswerTextMaker;
 import com.vix.circustelegramchat.bot.util.BotUtil;
+import com.vix.circustelegramchat.bot.util.ButtonCreator;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
 import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.model.Visitor;
@@ -9,6 +10,7 @@ import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.service.VisitorService;
 import com.vix.circustelegramchat.service.PerformanceService;
+import com.vix.circustelegramchat.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class TextHandler implements Constants {
 
     private final BotUtil botUtil;
+    private final ButtonCreator buttonCreator;
     private final KeyboardCreator keyboardCreator;
     private final AnswerTextMaker answerTextMaker;
     private final TicketService ticketService;
@@ -76,7 +79,6 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> unSupportedCommandReceived(String chatId) {
-        //TODO: add some buttons here
         return List.of(botUtil.initNewMessage(chatId, TEXT_UNSUPPORTED_ACTION));
     }
 

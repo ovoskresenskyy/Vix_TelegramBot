@@ -41,7 +41,7 @@ public class DocumentSender implements Constants {
     private SendDocument getTicket(Visitor visitor, String callBackData) {
         Ticket ticket = ticketService.findById(botUtil.extractId(callBackData));
         Performance performance = performanceService.findById(ticket.getPerformanceId());
-        File pdfTicket = getPDFTicket(ticket.getId(), customer, performance);
+        File pdfTicket = getPDFTicket(ticket, performance);
 
         return SendDocument.builder()
                 .chatId(visitor.getChatId())
@@ -49,10 +49,10 @@ public class DocumentSender implements Constants {
                 .build();
     }
 
-    private File getPDFTicket(int ticketId, Customer customer, Performance performance) {
+    private File getPDFTicket(Ticket ticket, Performance performance) {
 
         Document document = new Document();
-        File ticketPDF = new File(getTicketName(ticketId, performance));
+        File ticketPDF = new File(getTicketName(ticket.getId(), performance));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(ticketPDF);
             PdfWriter.getInstance(document, fileOutputStream);
@@ -61,7 +61,7 @@ public class DocumentSender implements Constants {
         }
 
         document.open();
-        String ticketText = getTicketText(customer, performance);
+        String ticketText = getTicketText(ticket, performance);
         fillTheTicket(document, ticketText);
         document.close();
 
@@ -79,13 +79,13 @@ public class DocumentSender implements Constants {
 
     }
 
-    private String getTicketText(Customer customer, Performance performance) {
+    private String getTicketText(Ticket ticket, Performance performance) {
         return "Performance: " + performance.getName()
                 + "\nDate: " + performance.getDate() + " " + performance.getTime()
                 + "\n\nVisitor"
-                + "\nFirst name: " + customer.getFirstName()
-                + "\nLast name: " + customer.getLastName()
-                + "\nPhone number: " + customer.getPhoneNumber();
+                + "\nFirst name: " + ticket.getVisitorFirstName()
+                + "\nLast name: " + ticket.getVisitorLastName()
+                + "\nPhone number: " + ticket.getVisitorPhoneNumber();
 
     }
 

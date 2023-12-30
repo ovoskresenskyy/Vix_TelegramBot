@@ -2,6 +2,7 @@ package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.model.Performance;
+import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,11 @@ public class KeyboardCreator implements Constants {
                 buttonCreator.getChatWithOperatorButton()
         ));
         return buttons;
+    }
+
+    public List<List<InlineKeyboardButton>> getVisitorTickets(List<Ticket> tickets) {
+
+        return null;
     }
 
     public List<List<InlineKeyboardButton>> getPerformanceAcceptationButtons(int performanceId) {

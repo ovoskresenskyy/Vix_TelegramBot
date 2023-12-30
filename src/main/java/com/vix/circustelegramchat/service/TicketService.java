@@ -5,6 +5,8 @@ import com.vix.circustelegramchat.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TicketService {
@@ -17,5 +19,9 @@ public class TicketService {
 
     public Ticket findById(int id) {
         return ticketRepository.findById(id).orElse(Ticket.builder().build());
+    }
+
+    public List<Ticket> findAllByVisitorId(int id) {
+       return ticketRepository.findAllByVisitorId(id);
     }
 }

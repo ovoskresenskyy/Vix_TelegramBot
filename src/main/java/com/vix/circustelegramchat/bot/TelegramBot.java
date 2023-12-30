@@ -60,7 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
             Message message = update.getCallbackQuery().getMessage();
             String callBackData = update.getCallbackQuery().getData();
             String chatId = String.valueOf(message.getChatId());
-            Customer customer = customerService.findByChatId(chatId);
+            Visitor visitor = visitorService.findByChatId(chatId);
 
             if (callBackData.contains(CBD_GET_TICKET_ID_)) {
                 sendMessage(documentSender.handle(visitor, callBackData));
