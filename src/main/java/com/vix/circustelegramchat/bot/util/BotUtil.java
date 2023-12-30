@@ -1,6 +1,6 @@
 package com.vix.circustelegramchat.bot.util;
 
-import com.vix.circustelegramchat.config.Constants;
+import com.vix.circustelegramchat.bot.Constants;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;

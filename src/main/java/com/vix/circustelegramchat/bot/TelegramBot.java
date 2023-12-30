@@ -3,9 +3,8 @@ package com.vix.circustelegramchat.bot;
 import com.vix.circustelegramchat.bot.handler.CallBackDataHandler;
 import com.vix.circustelegramchat.bot.handler.DocumentSender;
 import com.vix.circustelegramchat.bot.handler.TextHandler;
-import com.vix.circustelegramchat.config.Constants;
-import com.vix.circustelegramchat.model.Customer;
-import com.vix.circustelegramchat.service.CustomerService;
+import com.vix.circustelegramchat.model.Visitor;
+import com.vix.circustelegramchat.service.VisitorService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,7 @@ import java.util.List;
 @Slf4j
 public class TelegramBot extends TelegramLongPollingBot implements Constants {
 
-    private final CustomerService customerService;
+    private final VisitorService visitorService;
     private final TextHandler textHandler;
     private final CallBackDataHandler callBackDataHandler;
     private final DocumentSender documentSender;
@@ -34,11 +33,11 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
     private String botUsername;
 
     public TelegramBot(@Value("${bot.token}") String botToken,
-                       CustomerService customerService,
+                       VisitorService visitorService,
                        TextHandler textHandler,
                        CallBackDataHandler callBackDataHandler, DocumentSender documentSender) {
         super(botToken);
-        this.customerService = customerService;
+        this.visitorService = visitorService;
         this.textHandler = textHandler;
         this.callBackDataHandler = callBackDataHandler;
         this.documentSender = documentSender;
@@ -54,9 +53,9 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
         if (isMessageWithText(update)) {
             String text = update.getMessage().getText();
             String chatId = String.valueOf(update.getMessage().getChatId());
-            Customer customer = customerService.findByChatId(chatId);
+            Visitor visitor = visitorService.findByChatId(chatId);
 
-            sendMessage(textHandler.handle(customer, text));
+            sendMessage(textHandler.handle(visitor, text));
         } else if (update.hasCallbackQuery()) {
             Message message = update.getCallbackQuery().getMessage();
             String callBackData = update.getCallbackQuery().getData();
@@ -64,9 +63,11 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
             Customer customer = customerService.findByChatId(chatId);
 
             if (callBackData.contains(CBD_GET_TICKET_ID_)) {
-                sendMessage(documentSender.handle(customer, callBackData));
+                sendMessage(documentSender.handle(visitor, callBackData));
+            } else if (callBackData.contains(CBD_SHOW_MY_TICKETS)) {
+                sendMessage(textHandler.handle(visitor, callBackData));
             } else {
-                sendMessage(callBackDataHandler.handle(customer, message, callBackData));
+                sendMessage(callBackDataHandler.handle(visitor, message, callBackData));
             }
         }
     }

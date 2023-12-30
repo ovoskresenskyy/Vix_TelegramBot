@@ -1,6 +1,6 @@
 package com.vix.circustelegramchat.bot.util;
 
-import com.vix.circustelegramchat.config.Constants;
+import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.service.PerformanceService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.vix.circustelegramchat.bot.util;
 
-import com.vix.circustelegramchat.config.Constants;
+import com.vix.circustelegramchat.bot.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;

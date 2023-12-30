@@ -1,7 +1,7 @@
 package com.vix.circustelegramchat.bot.util;
 
-import com.vix.circustelegramchat.config.Constants;
-import com.vix.circustelegramchat.model.Customer;
+import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +22,13 @@ public class AnswerTextMaker implements Constants {
         return "Last name " + name + " was saved.";
     }
 
-    public String performanceSelected(Customer customer, Performance performance) {
+    public String performanceSelected(Visitor visitor, Performance performance) {
         return "Perfect choice! You choose " + performance.getName()
                 + "\nPerformance starts " + performance.getDate().format(PERFORMANCE_DATE_FORMAT)
                 + " at " + performance.getTime()
                 + "\n\nVisitor data:\n"
-                + customer.getFirstName() + " " + customer.getLastName()
-                + "Phone number: " + customer.getPhoneNumber()
+                + visitor.getFullName()
+                + "\nPhone number: " + visitor.getPhoneNumber()
                 + "\n\nPress 'Accept' to approve.";
     }
 

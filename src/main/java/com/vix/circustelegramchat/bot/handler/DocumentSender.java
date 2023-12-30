@@ -5,8 +5,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.vix.circustelegramchat.bot.util.BotUtil;
-import com.vix.circustelegramchat.config.Constants;
-import com.vix.circustelegramchat.model.Customer;
+import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.service.PerformanceService;
@@ -30,21 +30,21 @@ public class DocumentSender implements Constants {
     private final TicketService ticketService;
     private final PerformanceService performanceService;
 
-    public SendDocument handle(Customer customer, String callBackData) {
+    public SendDocument handle(Visitor visitor, String callBackData) {
         if (callBackData.contains(CBD_GET_TICKET_ID_)) {
-            return getTicket(customer, callBackData);
+            return getTicket(visitor, callBackData);
         }
 
         return SendDocument.builder().build();
     }
 
-    private SendDocument getTicket(Customer customer, String callBackData) {
+    private SendDocument getTicket(Visitor visitor, String callBackData) {
         Ticket ticket = ticketService.findById(botUtil.extractId(callBackData));
         Performance performance = performanceService.findById(ticket.getPerformanceId());
         File pdfTicket = getPDFTicket(ticket.getId(), customer, performance);
 
         return SendDocument.builder()
-                .chatId(customer.getChatId())
+                .chatId(visitor.getChatId())
                 .document(new InputFile(pdfTicket))
                 .build();
     }

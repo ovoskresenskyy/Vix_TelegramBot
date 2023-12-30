@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS performance
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS customer
+CREATE TABLE IF NOT EXISTS visitor
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
     first_name text,
@@ -26,14 +26,17 @@ CREATE TABLE IF NOT EXISTS customer
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS visit
+CREATE TABLE IF NOT EXISTS ticket
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 ),
-    user_id integer,
+    visitor_id integer,
     performance_id integer,
+    visitor_first_name text,
+    visitor_last_name text,
+    visitor_phone_number text,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id)
-        REFERENCES circus_tg_chat.customer (id) MATCH SIMPLE
+    FOREIGN KEY (visitor_id)
+        REFERENCES circus_tg_chat.visitor (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE CASCADE
 );

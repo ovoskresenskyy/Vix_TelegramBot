@@ -3,11 +3,11 @@ package com.vix.circustelegramchat.bot.handler;
 import com.vix.circustelegramchat.bot.util.AnswerTextMaker;
 import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
-import com.vix.circustelegramchat.config.Constants;
-import com.vix.circustelegramchat.model.Customer;
+import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
-import com.vix.circustelegramchat.service.CustomerService;
+import com.vix.circustelegramchat.service.VisitorService;
 import com.vix.circustelegramchat.service.PerformanceService;
 import com.vix.circustelegramchat.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -28,40 +28,44 @@ public class CallBackDataHandler implements Constants {
     private final BotUtil botUtil;
     private final KeyboardCreator keyboardCreator;
     private final AnswerTextMaker answerTextMaker;
-    private final CustomerService customerService;
+    private final VisitorService visitorService;
     private final PerformanceService performanceService;
     private final TicketService ticketService;
 
-    public EditMessageText handle(Customer customer, Message message, String callBackData) {
+    public EditMessageText handle(Visitor visitor, Message message, String callBackData) {
         return switch (callBackData) {
-            case CBD_MAIN_MENU -> backToMainMenuPressed(message);
-            case CBD_ORDER_TICKET -> orderTicketsPressed(customer, message);
-            case CBD_SHOW_MY_TICKETS -> showMyTicketsPressed(message);
-            case CBD_SHOW_MY_DATA -> showMyDataPressed(customer, message);
-            default -> customButtonPressed(customer, message, callBackData);
+            case CBD_MAIN_MENU -> backToMainMenuPressed(visitor, message);
+            case CBD_ORDER_TICKET -> orderTicketsPressed(visitor, message);
+            case CBD_SHOW_MY_DATA -> showMyDataPressed(visitor, message);
+            default -> customButtonPressed(visitor, message, callBackData);
         };
     }
 
-    private EditMessageText backToMainMenuPressed(Message message) {
-        return botUtil.initNewEditMessageText(message, TEXT_WELCOME, keyboardCreator.getMainMenuButtons());
+    private EditMessageText backToMainMenuPressed(Visitor visitor, Message message) {
+        return botUtil.initNewEditMessageText(message,
+                answerTextMaker.welcomeText(visitor),
+                keyboardCreator.getMainMenuButtons());
     }
 
-    private EditMessageText customButtonPressed(Customer customer, Message message, String callBackData) {
+    private EditMessageText customButtonPressed(Visitor visitor, Message message, String callBackData) {
         if (callBackData.contains(CBD_SHOW_PERFORMANCES_DATE_)) {
             return navigationButtonPressed(message, callBackData);
         } else if (callBackData.contains(CBD_SELECTED_PERFORMANCE_ID_)) {
-            return performanceSelected(customer, message, callBackData);
+            return performanceSelected(visitor, message, callBackData);
         } else if (callBackData.contains(CBD_ACCEPTED_PERFORMANCE_ID_)) {
-            return performanceAccepted(customer, message, callBackData);
+            return performanceAccepted(visitor, message, callBackData);
         } else {
             return unSupportedButtonPressed(message);
         }
     }
 
-    private EditMessageText performanceAccepted(Customer customer, Message message, String callBackData) {
+    private EditMessageText performanceAccepted(Visitor visitor, Message message, String callBackData) {
         Ticket ticket = ticketService.save(Ticket.builder()
-                .customerId(customer.getId())
                 .performanceId(botUtil.extractId(callBackData))
+                .visitorId(visitor.getId())
+                .visitorFirstName(visitor.getFirstName())
+                .visitorLastName(visitor.getLastName())
+                .visitorPhoneNumber(visitor.getPhoneNumber())
                 .build());
         String text = answerTextMaker.ticketOrdered();
         List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptedButtons(ticket.getId());
@@ -69,10 +73,10 @@ public class CallBackDataHandler implements Constants {
         return botUtil.initNewEditMessageText(message, text, keyboard);
     }
 
-    private EditMessageText performanceSelected(Customer customer, Message message, String callBackData) {
+    private EditMessageText performanceSelected(Visitor visitor, Message message, String callBackData) {
         int performanceId = botUtil.extractId(callBackData);
         Performance performance = performanceService.findById(performanceId);
-        String text = answerTextMaker.performanceSelected(customer, performance);
+        String text = answerTextMaker.performanceSelected(visitor, performance);
         List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptationButtons(performanceId);
 
         return botUtil.initNewEditMessageText(message, text, keyboard);
@@ -97,11 +101,11 @@ public class CallBackDataHandler implements Constants {
                 .build();
     }
 
-    private EditMessageText orderTicketsPressed(Customer customer, Message message) {
-        if (customer.getState().equals(STATE_REGISTERED)) {
+    private EditMessageText orderTicketsPressed(Visitor visitor, Message message) {
+        if (visitor.getState().equals(STATE_REGISTERED)) {
             return showUpcomingPerformances(message);
         }
-        customerService.changeState(customer, STATE_REGISTRATION_STARTED);
+        visitorService.changeState(visitor, STATE_REGISTRATION_STARTED);
         return botUtil.initNewEditMessageText(message, TEXT_REGISTRATION_PHONE_NUMBER);
     }
 
@@ -118,14 +122,14 @@ public class CallBackDataHandler implements Constants {
         }
     }
 
-    private EditMessageText showMyDataPressed(Customer customer, Message message) {
-        if (customer.getState().equals(STATE_EMPTY)) {
+    private EditMessageText showMyDataPressed(Visitor visitor, Message message) {
+        if (visitor.getState().equals(STATE_EMPTY)) {
             return botUtil.initNewEditMessageText(message,
                     TEXT_UNREGISTERED_USER_DATA,
                     keyboardCreator.getBackToMainMenuKeyboard());
         } else {
             return botUtil.initNewEditMessageText(message,
-                    customer.toString(),
+                    visitor.toString(),
                     keyboardCreator.getRegisteredUserShowDataButtons());
         }
     }
