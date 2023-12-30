@@ -1,8 +1,6 @@
 package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
-import com.vix.circustelegramchat.model.Visitor;
-import com.vix.circustelegramchat.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,15 +15,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class BotUtil implements Constants {
 
-    private final PerformanceService performanceService;
-    private final AnswerTextMaker answerTextMaker;
-    private final KeyboardCreator keyboardCreator;
+    private final List<BotCommand> supportedCommands = List.of(
+            getCommand(COMMAND_START, COMMAND_DESCRIPTION_START),
+            getCommand(COMMAND_SHOW_MY_DATA, COMMAND_DESCRIPTION_SHOW_MY_DATA),
+            getCommand(COMMAND_ORDER_TICKET, COMMAND_DESCRIPTION_ORDER_TICKET),
+            getCommand(COMMAND_SHOW_MY_TICKETS, COMMAND_DESCRIPTION_SHOW_MY_TICKETS),
+            getCommand(COMMAND_OPERATOR, COMMAND_DESCRIPTION_OPERATOR));
 
     public SendMessage initNewMessage(String chatId, String text) {
         return initNewMessage(chatId, text, Collections.emptyList());
@@ -87,19 +87,7 @@ public class BotUtil implements Constants {
                 .build();
     }
 
-
-
-    public List<SendMessage> showUpcomingPerformances(Visitor visitor) {
-        Optional<LocalDate> optionalPerformanceDate = performanceService.getUpcomingPerformanceDate();
-        if (optionalPerformanceDate.isPresent()) {
-            LocalDate performanceDate = optionalPerformanceDate.get();
-            String text = answerTextMaker.navigationButtonPressed(performanceDate);
-            List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
-
-            return List.of(initNewMessage(visitor.getChatId(), text, keyboard));
-        } else {
-            return List.of(initNewMessage(visitor.getChatId(), TEXT_NO_UPCOMING_PERFORMANCES));
-        }
+    public List<BotCommand> getSupportedCommands() {
+        return supportedCommands;
     }
-
 }
