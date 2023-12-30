@@ -36,37 +36,52 @@ public class TextHandler implements Constants {
     public List<SendMessage> handle(Visitor visitor, String text) {
         return switch (text) {
             case COMMAND_START -> commandStartReceived(visitor);
-            case CBD_SHOW_MY_TICKETS -> showMyTicketsPressed(visitor, text);
+            case COMMAND_SHOW_MY_DATA -> commandShowMyDataReceived(visitor);
+            case COMMAND_ORDER_TICKET -> commandOrderTicketReceived(visitor);
+            case COMMAND_SHOW_MY_TICKETS -> commandShowMyTicketsReceived(visitor);
+            case COMMAND_OPERATOR -> commandOperatorReceived(visitor);
             default -> handleUserInput(visitor, text);
         };
     }
 
-    private List<SendMessage> showMyTicketsPressed(Visitor visitor, String text) {
+    private List<SendMessage> commandStartReceived(Visitor visitor) {
+        return List.of(botUtil.initNewMessage(visitor.getChatId(), answerTextMaker.welcomeText(visitor)));
+    }
 
+    private List<SendMessage> commandShowMyDataReceived(Visitor visitor) {
+        return List.of(visitor.getState().equals(STATE_EMPTY)
+                ? botUtil.initNewMessage(visitor.getChatId(), TEXT_UNREGISTERED_USER_DATA)
+                : botUtil.initNewMessage(visitor.getChatId(),
+                visitor.toString(),
+                keyboardCreator.getRegisteredUserShowDataButtons()));
+    }
+
+    private List<SendMessage> commandOrderTicketReceived(Visitor visitor) {
+        if (visitor.getState().equals(STATE_REGISTERED)) {
+            return botUtil.showUpcomingPerformances(visitor);
+        } else {
+            visitorService.changeState(visitor, STATE_REGISTRATION_STARTED);
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_REGISTRATION_PHONE_NUMBER));
+        }
+    }
+
+    private List<SendMessage> commandShowMyTicketsReceived(Visitor visitor) {
         List<SendMessage> answers = new ArrayList<>();
         List<Ticket> tickets = ticketService.findAllByVisitorId(visitor.getId());
         String chatId = visitor.getChatId();
 
         for (Ticket ticket : tickets) {
             Performance performance = performanceService.findById(ticket.getPerformanceId());
-
-            String textBack = "#" + ticket.getId()
-                    + "\n" + performance.toString()
-                    + "\n\nVisitor: "
-                    + ticket.getVisitorFirstName() + " " + ticket.getVisitorLastName();
-
-            List<List<InlineKeyboardButton>> ticketButton = List.of(List.of(buttonCreator.getTicketButton(ticket.getId())));
-            SendMessage message = botUtil.initNewMessage(chatId, textBack, ticketButton);
-            answers.add(message);
+            answers.add(botUtil.initNewMessage(chatId,
+                    answerTextMaker.getOrderedTicketDescription(ticket, performance),
+                    keyboardCreator.getOneButtonKeyBoard(buttonCreator.getTicketButton(ticket.getId()))));
         }
 
         return answers;
     }
 
-    private List<SendMessage> commandStartReceived(Visitor visitor) {
-        return List.of(botUtil.initNewMessage(visitor.getChatId(),
-                answerTextMaker.welcomeText(visitor),
-                keyboardCreator.getMainMenuButtons()));
+    private List<SendMessage> commandOperatorReceived(Visitor visitor) {
+        return null;
     }
 
     private List<SendMessage> handleUserInput(Visitor visitor, String text) {

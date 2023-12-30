@@ -34,17 +34,8 @@ public class CallBackDataHandler implements Constants {
 
     public EditMessageText handle(Visitor visitor, Message message, String callBackData) {
         return switch (callBackData) {
-            case CBD_MAIN_MENU -> backToMainMenuPressed(visitor, message);
-            case CBD_ORDER_TICKET -> orderTicketsPressed(visitor, message);
-            case CBD_SHOW_MY_DATA -> showMyDataPressed(visitor, message);
             default -> customButtonPressed(visitor, message, callBackData);
         };
-    }
-
-    private EditMessageText backToMainMenuPressed(Visitor visitor, Message message) {
-        return botUtil.initNewEditMessageText(message,
-                answerTextMaker.welcomeText(visitor),
-                keyboardCreator.getMainMenuButtons());
     }
 
     private EditMessageText customButtonPressed(Visitor visitor, Message message, String callBackData) {
@@ -101,36 +92,4 @@ public class CallBackDataHandler implements Constants {
                 .build();
     }
 
-    private EditMessageText orderTicketsPressed(Visitor visitor, Message message) {
-        if (visitor.getState().equals(STATE_REGISTERED)) {
-            return showUpcomingPerformances(message);
-        }
-        visitorService.changeState(visitor, STATE_REGISTRATION_STARTED);
-        return botUtil.initNewEditMessageText(message, TEXT_REGISTRATION_PHONE_NUMBER);
-    }
-
-    private EditMessageText showUpcomingPerformances(Message message) {
-        Optional<LocalDate> optionalPerformanceDate = performanceService.getUpcomingPerformanceDate();
-        if (optionalPerformanceDate.isPresent()) {
-            LocalDate performanceDate = optionalPerformanceDate.get();
-            String text = answerTextMaker.navigationButtonPressed(performanceDate);
-            List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
-
-            return botUtil.initNewEditMessageText(message, text, keyboard);
-        } else {
-            return botUtil.initNewEditMessageText(message, TEXT_NO_UPCOMING_PERFORMANCES);
-        }
-    }
-
-    private EditMessageText showMyDataPressed(Visitor visitor, Message message) {
-        if (visitor.getState().equals(STATE_EMPTY)) {
-            return botUtil.initNewEditMessageText(message,
-                    TEXT_UNREGISTERED_USER_DATA,
-                    keyboardCreator.getBackToMainMenuKeyboard());
-        } else {
-            return botUtil.initNewEditMessageText(message,
-                    visitor.toString(),
-                    keyboardCreator.getRegisteredUserShowDataButtons());
-        }
-    }
 }
