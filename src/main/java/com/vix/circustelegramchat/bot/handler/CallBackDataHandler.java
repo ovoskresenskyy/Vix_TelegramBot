@@ -30,8 +30,15 @@ public class CallBackDataHandler implements Constants {
 
     public EditMessageText handle(Visitor visitor, Message message, String callBackData) {
         return switch (callBackData) {
+            case CBD_CHANGE_MY_DATA -> changeMyDataButtonPressed(message);
             default -> customButtonPressed(visitor, message, callBackData);
         };
+    }
+
+    private EditMessageText changeMyDataButtonPressed(Message message) {
+        return botUtil.initNewEditMessageText(message,
+                message.getText(),
+                keyboardCreator.getChangeDataKeyboard());
     }
 
     private EditMessageText customButtonPressed(Visitor visitor, Message message, String callBackData) {

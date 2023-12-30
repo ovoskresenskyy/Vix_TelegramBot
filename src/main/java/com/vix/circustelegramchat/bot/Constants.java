@@ -32,11 +32,15 @@ public interface Constants {
     /**
      * Call back data
      */
-    String CBD_MAIN_MENU = "CBD_MAIN_MENU";
     String CBD_ORDER_TICKET = "CBD_ORDER_TICKET";
     String CBD_SHOW_MY_TICKETS = "CBD_SHOW_MY_TICKETS";
-    String CBD_SHOW_MY_DATA = "CBD_SHOW_MY_DATA";
+
     String CBD_CHANGE_MY_DATA = "CBD_CHANGE_MY_DATA";
+    String CBD_BUTTON_CHANGE_FIRST_NAME = "CBD_BUTTON_CHANGE_FIRST_NAME";
+    String CBD_BUTTON_CHANGE_LAST_NAME = "CBD_BUTTON_CHANGE_LAST_NAME";
+    String CBD_BUTTON_CHANGE_PHONE_NUMBER = "CBD_BUTTON_CHANGE_PHONE_NUMBER";
+
+
     String CBD_CHAT_WITH_OPERATOR = "CBD_CHAT_WITH_OPERATOR";
     String CBD_SELECTED_PERFORMANCE_ID_ = "CBD_SELECTED_PERFORMANCE_ID_";
     String CBD_ACCEPTED_PERFORMANCE_ID_ = "CBD_ACCEPTED_PERFORMANCE_ID_";
@@ -46,11 +50,10 @@ public interface Constants {
     /**
      * Buttons text
      */
-    String BUTTON_MAIN_MENU = "Back to main menu";
-    String BUTTON_ORDER_TICKET = "Order new ticket";
-    String BUTTON_SHOW_MY_TICKETS = "Show my tickets";
-    String BUTTON_SHOW_MY_DATA = "Show my data";
     String BUTTON_CHANGE_MY_DATA = "Change my data";
+    String BUTTON_CHANGE_FIRST_NAME = "Change first name";
+    String BUTTON_CHANGE_LAST_NAME = "Change last name";
+    String BUTTON_CHANGE_PHONE_NUMBER = "Change phone number";
     String BUTTON_CHAT_WITH_OPERATOR = "Chat with operator";
 
     String BUTTON_ACCEPT = "Accept";

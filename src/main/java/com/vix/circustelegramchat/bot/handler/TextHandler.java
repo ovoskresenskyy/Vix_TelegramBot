@@ -49,11 +49,14 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> commandShowMyDataReceived(Visitor visitor) {
-        return List.of(visitor.getState().equals(STATE_EMPTY)
-                ? botUtil.initNewMessage(visitor.getChatId(), TEXT_UNREGISTERED_USER_DATA)
-                : botUtil.initNewMessage(visitor.getChatId(),
+        String chatId = visitor.getChatId();
+        if (visitor.getState().equals(STATE_EMPTY)) {
+            return List.of(botUtil.initNewMessage(chatId, TEXT_UNREGISTERED_USER_DATA));
+        }
+
+        return List.of(botUtil.initNewMessage(chatId,
                 visitor.toString(),
-                keyboardCreator.getRegisteredUserShowDataButtons()));
+                keyboardCreator.getOneButtonKeyBoard(buttonCreator.getChangeMyDataButton())));
     }
 
     private List<SendMessage> commandOrderTicketReceived(Visitor visitor) {
@@ -155,6 +158,4 @@ public class TextHandler implements Constants {
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NO_UPCOMING_PERFORMANCES));
         }
     }
-
-
 }

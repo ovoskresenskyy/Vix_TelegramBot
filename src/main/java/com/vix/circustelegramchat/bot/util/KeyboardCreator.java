@@ -69,8 +69,10 @@ public class KeyboardCreator implements Constants {
         return navigationButtons;
     }
 
-    public List<List<InlineKeyboardButton>> getRegisteredUserShowDataButtons() {
-        return List.of(List.of(buttonCreator.getChangeMyDataButton()));
+    public List<List<InlineKeyboardButton>> getChangeDataKeyboard() {
+        return List.of(
+                List.of(buttonCreator.getChangeFirstNameButton(), buttonCreator.getChangeLastNameButton()),
+                List.of(buttonCreator.getChangePhoneNumberButton()));
     }
 
     public List<List<InlineKeyboardButton>> getOneButtonKeyBoard(InlineKeyboardButton button) {

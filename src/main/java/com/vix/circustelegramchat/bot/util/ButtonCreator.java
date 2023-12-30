@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 @RequiredArgsConstructor
 public class ButtonCreator implements Constants {
 
-
     private InlineKeyboardButton getButton(String text, String callBackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
@@ -17,16 +16,20 @@ public class ButtonCreator implements Constants {
         return button;
     }
 
-    public InlineKeyboardButton getOrderTicketButton(){
-        return getButton(BUTTON_ORDER_TICKET, CBD_ORDER_TICKET);
-    }
-
     public InlineKeyboardButton getChangeMyDataButton(){
         return getButton(BUTTON_CHANGE_MY_DATA, CBD_CHANGE_MY_DATA);
     }
 
-    public InlineKeyboardButton getChatWithOperatorButton() {
-        return getButton(BUTTON_CHAT_WITH_OPERATOR, CBD_CHAT_WITH_OPERATOR);
+    public InlineKeyboardButton getChangeFirstNameButton(){
+        return getButton(BUTTON_CHANGE_FIRST_NAME, CBD_BUTTON_CHANGE_FIRST_NAME);
+    }
+
+    public InlineKeyboardButton getChangeLastNameButton(){
+        return getButton(BUTTON_CHANGE_LAST_NAME, CBD_BUTTON_CHANGE_LAST_NAME);
+    }
+
+    public InlineKeyboardButton getChangePhoneNumberButton(){
+        return getButton(BUTTON_CHANGE_PHONE_NUMBER, CBD_BUTTON_CHANGE_PHONE_NUMBER);
     }
 
     public InlineKeyboardButton getBackToPerformancesButton(){
