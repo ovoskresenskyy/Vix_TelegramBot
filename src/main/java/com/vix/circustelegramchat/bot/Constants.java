@@ -19,7 +19,16 @@ public interface Constants {
      * Commands
      */
     String COMMAND_START = "/start";
+    String COMMAND_SHOW_MY_DATA = "/my_data";
+    String COMMAND_ORDER_TICKET = "/order_ticket";
+    String COMMAND_SHOW_MY_TICKETS = "/my_tickets";
+    String COMMAND_OPERATOR = "/operator";
 
+    String COMMAND_DESCRIPTION_START = "Get a welcome message";
+    String COMMAND_DESCRIPTION_SHOW_MY_DATA = "Show my data";
+    String COMMAND_DESCRIPTION_ORDER_TICKET = "Order new ticket";
+    String COMMAND_DESCRIPTION_SHOW_MY_TICKETS = "Show my tickets";
+    String COMMAND_DESCRIPTION_OPERATOR = "Chat with operator";
     /**
      * Call back data
      */
@@ -57,6 +66,7 @@ public interface Constants {
     String TEXT_WELCOME_UNREGISTERED = """
             Welcome to our chat-bot.
             Here you can order tickets for our performances.""";
+
     String TEXT_UNREGISTERED_USER_DATA = """
             We currently have no information about you.
             We will save your data after ordering tickets.""";
