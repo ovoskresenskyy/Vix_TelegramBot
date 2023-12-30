@@ -1,6 +1,7 @@
 package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import org.springframework.stereotype.Component;
@@ -44,5 +45,12 @@ public class AnswerTextMaker implements Constants {
 
     public String ticketOrdered() {
         return "Congrats, ticket was ordered.";
+    }
+
+    public String getOrderedTicketDescription(Ticket ticket, Performance performance) {
+        return "#" + ticket.getId()
+                + "\n" + performance.toString()
+                + "\n\nVisitor: "
+                + ticket.getVisitorFirstName() + " " + ticket.getVisitorLastName();
     }
 }
