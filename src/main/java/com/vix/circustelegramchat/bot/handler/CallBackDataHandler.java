@@ -1,34 +1,30 @@
 package com.vix.circustelegramchat.bot.handler;
 
+import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.bot.util.AnswerTextMaker;
 import com.vix.circustelegramchat.bot.util.BotUtil;
+import com.vix.circustelegramchat.bot.util.ButtonCreator;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
-import com.vix.circustelegramchat.bot.Constants;
-import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
-import com.vix.circustelegramchat.service.VisitorService;
+import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.service.PerformanceService;
 import com.vix.circustelegramchat.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class CallBackDataHandler implements Constants {
 
     private final BotUtil botUtil;
+    private final ButtonCreator buttonCreator;
     private final KeyboardCreator keyboardCreator;
     private final AnswerTextMaker answerTextMaker;
-    private final VisitorService visitorService;
     private final PerformanceService performanceService;
     private final TicketService ticketService;
 
@@ -58,27 +54,27 @@ public class CallBackDataHandler implements Constants {
                 .visitorLastName(visitor.getLastName())
                 .visitorPhoneNumber(visitor.getPhoneNumber())
                 .build());
-        String text = answerTextMaker.ticketOrdered();
-        List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptedButtons(ticket.getId());
 
-        return botUtil.initNewEditMessageText(message, text, keyboard);
+        return botUtil.initNewEditMessageText(message,
+                answerTextMaker.ticketOrdered(),
+                keyboardCreator.getOneButtonKeyBoard(buttonCreator.getTicketButton(ticket.getId())));
     }
 
     private EditMessageText performanceSelected(Visitor visitor, Message message, String callBackData) {
         int performanceId = botUtil.extractId(callBackData);
         Performance performance = performanceService.findById(performanceId);
-        String text = answerTextMaker.performanceSelected(visitor, performance);
-        List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceAcceptationButtons(performanceId);
 
-        return botUtil.initNewEditMessageText(message, text, keyboard);
+        return botUtil.initNewEditMessageText(message,
+                answerTextMaker.performanceSelected(visitor, performance),
+                keyboardCreator.getPerformanceAcceptationButtons(performanceId));
     }
 
     private EditMessageText navigationButtonPressed(Message message, String callBackData) {
         LocalDate performanceDate = botUtil.extractDate(callBackData);
-        String text = answerTextMaker.navigationButtonPressed(performanceDate);
-        List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
 
-        return botUtil.initNewEditMessageText(message, text, keyboard);
+        return botUtil.initNewEditMessageText(message,
+                answerTextMaker.navigationButtonPressed(performanceDate),
+                keyboardCreator.getPerformanceKeyboard(performanceDate));
     }
 
     private EditMessageText unSupportedButtonPressed(Message message) {
@@ -86,9 +82,6 @@ public class CallBackDataHandler implements Constants {
                 .chatId(message.getChatId())
                 .messageId(message.getMessageId())
                 .text(TEXT_UNSUPPORTED_ACTION)
-                .replyMarkup(InlineKeyboardMarkup.builder()
-                        .keyboard(keyboardCreator.getMainMenuButtons())
-                        .build())
                 .build();
     }
 

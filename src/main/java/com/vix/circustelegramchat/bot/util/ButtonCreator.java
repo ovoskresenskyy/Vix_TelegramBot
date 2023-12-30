@@ -17,20 +17,8 @@ public class ButtonCreator implements Constants {
         return button;
     }
 
-    public InlineKeyboardButton getMainMenuButton(){
-        return getButton(BUTTON_MAIN_MENU, CBD_MAIN_MENU);
-    }
-
     public InlineKeyboardButton getOrderTicketButton(){
         return getButton(BUTTON_ORDER_TICKET, CBD_ORDER_TICKET);
-    }
-
-    public InlineKeyboardButton getShowMyTicketsButton(){
-        return getButton(BUTTON_SHOW_MY_TICKETS, CBD_SHOW_MY_TICKETS);
-    }
-
-    public InlineKeyboardButton getShowMyDataButton(){
-        return getButton(BUTTON_SHOW_MY_DATA, CBD_SHOW_MY_DATA);
     }
 
     public InlineKeyboardButton getChangeMyDataButton(){

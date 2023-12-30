@@ -58,7 +58,7 @@ public class TextHandler implements Constants {
 
     private List<SendMessage> commandOrderTicketReceived(Visitor visitor) {
         if (visitor.getState().equals(STATE_REGISTERED)) {
-            return botUtil.showUpcomingPerformances(visitor);
+            return showUpcomingPerformances(visitor);
         } else {
             visitorService.changeState(visitor, STATE_REGISTRATION_STARTED);
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_REGISTRATION_PHONE_NUMBER));
@@ -142,4 +142,19 @@ public class TextHandler implements Constants {
 
         return answers;
     }
+
+    private List<SendMessage> showUpcomingPerformances(Visitor visitor) {
+        Optional<LocalDate> optionalPerformanceDate = performanceService.getUpcomingPerformanceDate();
+        if (optionalPerformanceDate.isPresent()) {
+            LocalDate performanceDate = optionalPerformanceDate.get();
+            String text = answerTextMaker.navigationButtonPressed(performanceDate);
+            List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
+
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), text, keyboard));
+        } else {
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NO_UPCOMING_PERFORMANCES));
+        }
+    }
+
+
 }

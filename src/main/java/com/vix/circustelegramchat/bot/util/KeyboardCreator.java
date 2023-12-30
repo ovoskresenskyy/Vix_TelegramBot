@@ -2,7 +2,6 @@ package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.model.Performance;
-import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,41 +19,15 @@ public class KeyboardCreator implements Constants {
     private final PerformanceService performanceService;
     private final ButtonCreator buttonCreator;
 
-    public List<List<InlineKeyboardButton>> getMainMenuButtons() {
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(List.of(
-                buttonCreator.getOrderTicketButton(),
-                buttonCreator.getShowMyTicketsButton()
-        ));
-        buttons.add(List.of(
-                buttonCreator.getShowMyDataButton(),
-                buttonCreator.getChatWithOperatorButton()
-        ));
-        return buttons;
-    }
-
-    public List<List<InlineKeyboardButton>> getVisitorTickets(List<Ticket> tickets) {
-
-        return null;
-    }
-
     public List<List<InlineKeyboardButton>> getPerformanceAcceptationButtons(int performanceId) {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         buttons.add(List.of(
                 buttonCreator.getPerformanceAcceptButton(performanceId),
                 buttonCreator.getChangeMyDataButton()));
-        buttons.add(List.of(
-                buttonCreator.getBackToPerformancesButton(),
-                buttonCreator.getMainMenuButton()));
+        buttons.add(List.of(buttonCreator.getBackToPerformancesButton()));
 
         return buttons;
-    }
-
-    public List<List<InlineKeyboardButton>> getPerformanceAcceptedButtons(int ticketId) {
-        InlineKeyboardButton getTicketButton = buttonCreator.getTicketButton(ticketId);
-        InlineKeyboardButton backToMainMenuButton = buttonCreator.getMainMenuButton();
-        return List.of(List.of(getTicketButton, backToMainMenuButton));
     }
 
     public List<List<InlineKeyboardButton>> getPerformanceKeyboard(LocalDate performanceDate) {
@@ -62,7 +35,6 @@ public class KeyboardCreator implements Constants {
         List<Performance> performances = performanceService.getPerformancesByDate(performanceDate);
         buttons.add(getPerformanceButtons(performances));
         buttons.add(getNavigationButtons(performanceDate));
-        buttons.add(getBackToMainMenuButton());
 
         return buttons;
     }
@@ -98,17 +70,11 @@ public class KeyboardCreator implements Constants {
     }
 
     public List<List<InlineKeyboardButton>> getRegisteredUserShowDataButtons() {
-        return List.of(List.of(
-                buttonCreator.getChangeMyDataButton(),
-                buttonCreator.getMainMenuButton()));
+        return List.of(List.of(buttonCreator.getChangeMyDataButton()));
     }
 
-    public List<InlineKeyboardButton> getBackToMainMenuButton() {
-        return List.of(buttonCreator.getMainMenuButton());
-    }
-
-    public List<List<InlineKeyboardButton>> getBackToMainMenuKeyboard() {
-        return List.of(getBackToMainMenuButton());
+    public List<List<InlineKeyboardButton>> getOneButtonKeyBoard(InlineKeyboardButton button) {
+        return List.of(List.of(button));
     }
 
 }
