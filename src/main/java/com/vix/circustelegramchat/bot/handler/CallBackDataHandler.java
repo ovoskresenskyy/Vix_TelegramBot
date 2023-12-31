@@ -41,17 +41,17 @@ public class CallBackDataHandler implements Constants {
     }
 
     private EditMessageText changePhoneNumberButtonPressed(Visitor visitor, Message message) {
-        visitorService.changeState(visitor, STATE_PHONE_NUMBER_CHANGING);
+        visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_CHANGING);
         return botUtil.initNewEditMessageText(message, TEXT_PHONE_NUMBER_CHANGING);
     }
 
     private EditMessageText changeLastNameButtonPressed(Visitor visitor, Message message) {
-        visitorService.changeState(visitor, STATE_LAST_NAME_CHANGING);
+        visitorService.updateVisitor(visitor, STATE_LAST_NAME_CHANGING);
         return botUtil.initNewEditMessageText(message, TEXT_LAST_NAME_CHANGING);
     }
 
     private EditMessageText changeFirstNameButtonPressed(Visitor visitor, Message message) {
-        visitorService.changeState(visitor, STATE_FIRST_NAME_CHANGING);
+        visitorService.updateVisitor(visitor, STATE_FIRST_NAME_CHANGING);
         return botUtil.initNewEditMessageText(message, TEXT_FIRST_NAME_CHANGING);
     }
 

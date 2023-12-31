@@ -77,8 +77,6 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
 
         if (callBackData.contains(CBD_GET_TICKET_ID_)) {
             sendMessage(documentSender.handle(visitor, callBackData));
-        } else if (callBackData.contains(CBD_SHOW_MY_TICKETS)) {
-            sendMessage(textHandler.handle(visitor, callBackData));
         } else {
             sendMessage(callBackDataHandler.handle(visitor, message, callBackData));
         }

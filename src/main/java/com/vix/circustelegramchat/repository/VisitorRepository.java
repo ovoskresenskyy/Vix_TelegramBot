@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface VisitorRepository extends JpaRepository<Visitor, Integer> {
 
     Optional<Visitor> findByChatId(String chatId);
-
 }

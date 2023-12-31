@@ -17,13 +17,16 @@ public class BotInitializer {
 
     private final TelegramBot bot;
 
+    /**
+     * This method is responsible for registering the bot using TelegramBotApi
+     */
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         try {
             telegramBotsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            log.error("Error occurred: " + e.getMessage());
+            log.error("Error at the moment of registering the bot: " + e.getMessage());
         }
     }
 }

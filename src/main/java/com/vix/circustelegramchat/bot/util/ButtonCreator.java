@@ -33,7 +33,7 @@ public class ButtonCreator implements Constants {
     }
 
     public InlineKeyboardButton getBackToPerformancesButton(){
-        return getButton(BUTTON_BACK_TO_PERFORMANCES, CBD_ORDER_TICKET);
+        return getButton(BUTTON_BACK_TO_PERFORMANCES, CBD_BACK_TO_PERFORMANCES);
     }
 
     public InlineKeyboardButton getPerformanceAcceptButton(int id){

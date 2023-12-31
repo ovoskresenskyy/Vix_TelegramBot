@@ -63,7 +63,7 @@ public class TextHandler implements Constants {
         if (visitor.getState().equals(STATE_REGISTERED)) {
             return showUpcomingPerformances(visitor);
         } else {
-            visitorService.changeState(visitor, STATE_PHONE_NUMBER_ENTERING);
+            visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_ENTERING);
             return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_REGISTRATION_PHONE_NUMBER));
         }
     }
@@ -109,7 +109,7 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, phoneNumber);
         }
 
-        visitorService.changeState(visitor, STATE_FIRST_NAME_ENTERING, phoneNumber);
+        visitorService.updateVisitor(visitor, STATE_FIRST_NAME_ENTERING, phoneNumber);
 
         String text = answerTextMaker.phoneNumberEntered(phoneNumber);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -124,7 +124,7 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, name);
         }
 
-        visitorService.changeState(visitor, STATE_LAST_NAME_ENTERING, name);
+        visitorService.updateVisitor(visitor, STATE_LAST_NAME_ENTERING, name);
 
         String text = answerTextMaker.firstNameEntered(name);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -139,7 +139,7 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, name);
         }
 
-        visitorService.changeState(visitor, STATE_REGISTERED, name);
+        visitorService.updateVisitor(visitor, STATE_REGISTERED, name);
 
         List<SendMessage> answers = new ArrayList<>();
 
@@ -167,7 +167,7 @@ public class TextHandler implements Constants {
             case STATE_FIRST_NAME_CHANGING -> visitor.setFirstName(update);
             case STATE_LAST_NAME_CHANGING -> visitor.setLastName(update);
         }
-        visitorService.changeState(visitor, STATE_REGISTERED);
+        visitorService.updateVisitor(visitor, STATE_REGISTERED);
         return commandShowMyDataReceived(visitor);
     }
 
@@ -178,7 +178,7 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> showUpcomingPerformances(Visitor visitor) {
-        Optional<LocalDate> optionalPerformanceDate = performanceService.getUpcomingPerformanceDate();
+        Optional<LocalDate> optionalPerformanceDate = performanceService.getNextPerformanceDate(LocalDate.now());
         if (optionalPerformanceDate.isPresent()) {
             LocalDate performanceDate = optionalPerformanceDate.get();
             String text = answerTextMaker.navigationButtonPressed(performanceDate);

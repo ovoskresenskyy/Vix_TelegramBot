@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * This Service is responsible for communicate with matched repository.
+ * Getting data from repository, preparing and sending to user.
+ *
+ * All present methods are simple. Theirs signature are speaks for themselves.
+ */
 @Service
 @RequiredArgsConstructor
 public class TicketService {
