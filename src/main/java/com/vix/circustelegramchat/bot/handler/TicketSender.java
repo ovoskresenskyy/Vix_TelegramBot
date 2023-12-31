@@ -21,25 +21,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * This class is responsible for handling request from user to send the ticket.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DocumentSender implements Constants {
+public class TicketSender implements Constants {
 
     private final BotUtil botUtil;
     private final TicketService ticketService;
     private final PerformanceService performanceService;
 
-    public SendDocument handle(Visitor visitor, String callBackData) {
-        if (callBackData.contains(CBD_GET_TICKET_ID_)) {
-            return getTicket(visitor, callBackData);
-        }
-
-        return SendDocument.builder().build();
-    }
-
-    private SendDocument getTicket(Visitor visitor, String callBackData) {
-        Ticket ticket = ticketService.findById(botUtil.extractId(callBackData));
+    /**
+     * This method is responsible for getting SendDocument with the ticket
+     *
+     * @param visitor  - The visitor who ask fow the ticket
+     * @param ticketId - ID of ticket to be sent
+     * @return The SendDocument with the PDF ticket inside
+     */
+    public SendDocument getTicket(Visitor visitor, int ticketId) {
+        Ticket ticket = ticketService.findById(ticketId);
         Performance performance = performanceService.findById(ticket.getPerformanceId());
         File pdfTicket = getPDFTicket(ticket, performance);
 
@@ -49,6 +51,13 @@ public class DocumentSender implements Constants {
                 .build();
     }
 
+    /**
+     * This method prepares PDF file based on ticket and performance
+     *
+     * @param ticket      - Ticket on the basis of which the file will be made
+     * @param performance - Performance on the basis of which the file will be made
+     * @return PDF file of the ticket
+     */
     private File getPDFTicket(Ticket ticket, Performance performance) {
 
         Document document = new Document();
@@ -68,6 +77,12 @@ public class DocumentSender implements Constants {
         return ticketPDF;
     }
 
+    /**
+     * This method fills the ticket with the received data
+     *
+     * @param document - The document to be filled
+     * @param text     - The text to be filled into the file
+     */
     private void fillTheTicket(Document document, String text) {
         Paragraph p = new Paragraph();
         p.add(text);
@@ -79,6 +94,13 @@ public class DocumentSender implements Constants {
 
     }
 
+    /**
+     * This method prepares the text which will be inputted into the file
+     *
+     * @param ticket      - Ticket on the basis of which the text will be made
+     * @param performance - Performance on the basis of which the text will be made
+     * @return Prepared text for the ticket
+     */
     private String getTicketText(Ticket ticket, Performance performance) {
         return "Performance: " + performance.getName()
                 + "\nDate: " + performance.getDate() + " " + performance.getTime()
@@ -89,6 +111,13 @@ public class DocumentSender implements Constants {
 
     }
 
+    /**
+     * This method prepares the destination of new file of the ticket
+     *
+     * @param ticketId    - ID of ticket on the basis of which the file destination will be made
+     * @param performance - Performance on the basis of which the file destination will be made
+     * @return The file destination for the PDF file ticket
+     */
     private String getTicketName(int ticketId, Performance performance) {
         return "tickets"
                 + File.separator

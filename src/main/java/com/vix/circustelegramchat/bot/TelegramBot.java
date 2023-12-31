@@ -1,7 +1,7 @@
 package com.vix.circustelegramchat.bot;
 
 import com.vix.circustelegramchat.bot.handler.CallBackDataHandler;
-import com.vix.circustelegramchat.bot.handler.DocumentSender;
+import com.vix.circustelegramchat.bot.handler.TicketSender;
 import com.vix.circustelegramchat.bot.handler.TextHandler;
 import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.model.Visitor;
@@ -36,7 +36,7 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
     private final VisitorService visitorService;
     private final TextHandler textHandler;
     private final CallBackDataHandler callBackDataHandler;
-    private final DocumentSender documentSender;
+    private final TicketSender ticketSender;
 
     @Getter
     @Value("${bot.name}")
@@ -46,13 +46,13 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
                        BotUtil botUtil,
                        VisitorService visitorService,
                        TextHandler textHandler,
-                       CallBackDataHandler callBackDataHandler, DocumentSender documentSender) {
+                       CallBackDataHandler callBackDataHandler, TicketSender ticketSender) {
         super(botToken);
         this.botUtil = botUtil;
         this.visitorService = visitorService;
         this.textHandler = textHandler;
         this.callBackDataHandler = callBackDataHandler;
-        this.documentSender = documentSender;
+        this.ticketSender = ticketSender;
 
         setBotCommands();
     }
@@ -108,7 +108,10 @@ public class TelegramBot extends TelegramLongPollingBot implements Constants {
         Visitor visitor = visitorService.findByChatId(chatId);
 
         if (callBackData.contains(CBD_GET_TICKET_ID_)) {
-            sendMessage(documentSender.handle(visitor, callBackData));
+            int ticketId = botUtil.extractId(callBackData);
+            SendDocument ticket = ticketSender.getTicket(visitor, ticketId);
+
+            sendMessage(ticket);
         } else {
             sendMessage(callBackDataHandler.handle(visitor, message, callBackData));
         }
