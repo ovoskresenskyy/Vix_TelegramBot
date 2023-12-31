@@ -1,5 +1,6 @@
 package com.vix.circustelegramchat.model;
 
+import com.vix.circustelegramchat.bot.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +38,9 @@ public class Visitor {
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    public boolean isRegistered() {
+        return state.equals(Constants.STATE_REGISTERED);
     }
 }

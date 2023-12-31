@@ -2,7 +2,6 @@ package com.vix.circustelegramchat.bot;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.regex.Pattern;
 
 /**
  * This interface is a holder of different constants for make code more readable and flexible.
@@ -87,41 +86,6 @@ public interface Constants {
     String CBD_GET_TICKET_ID_ = "CBD_GET_TICKET_ID_";
 
     /**
-     * Texts.
-     * Different texts, which are used at the program.
-     */
-    String TEXT_WELCOME_UNREGISTERED = """
-            Welcome to our chat-bot.
-            Here you can order tickets for our performances.""";
-
-    String TEXT_UNREGISTERED_USER_DATA = """
-            We currently have no information about you.
-            We will save your data after ordering tickets.""";
-    String TEXT_NO_UPCOMING_PERFORMANCES = """
-            Sorry, there are no upcoming performances.
-            Come back later.""";
-    String TEXT_CHOSE_PERFORMANCE = """
-                
-            Please chose the performance.
-            Date:""";
-    String TEXT_REGISTRATION_PHONE_NUMBER = """
-            To get started you have to register.
-            Enter please your phone number in XXXYYYYYYY format.""";
-
-    String TEXT_PHONE_NUMBER_CHANGING = "Please enter your new phone number in XXXYYYYYYY format.";
-    String TEXT_FIRST_NAME_CHANGING = "Please enter your new first name.";
-    String TEXT_LAST_NAME_CHANGING = "Please enter your new last name.";
-
-    String TEXT_PHONE_NUMBER_NOT_VALID = """
-            The number does not match the format.
-            Please try again.""";
-    String TEXT_NAME_NOT_VALID = """
-            Entered name is not valid.
-            Please use only latin characters, no special characters.""";
-
-    String TEXT_UNSUPPORTED_ACTION = "Sorry, can't handle it.";
-
-    /**
      * Used to show date of performance in readable format
      */
     DateTimeFormatter PERFORMANCE_DATE_FORMAT = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG);
@@ -129,6 +93,6 @@ public interface Constants {
     /**
      * Patterns to check if the users input is correct
      */
-    Pattern PHONE_NUMBER_FORMAT = Pattern.compile("\\d{10}");
-    Pattern NAME_FORMAT = Pattern.compile("[A-Z](?=.{1,29}$)[A-Za-z]+( [A-Z][A-Za-z]+)*");
+    String PHONE_NUMBER_FORMAT = "\\d{10}";
+    String NAME_FORMAT = "[A-Z](?=.{1,29}$)[A-Za-z]+( [A-Z][A-Za-z]+)*";
 }

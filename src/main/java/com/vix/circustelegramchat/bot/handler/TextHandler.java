@@ -1,6 +1,6 @@
 package com.vix.circustelegramchat.bot.handler;
 
-import com.vix.circustelegramchat.bot.util.AnswerTextMaker;
+import com.vix.circustelegramchat.bot.util.AnswerUtil;
 import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.bot.util.ButtonCreator;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
@@ -28,7 +28,7 @@ public class TextHandler implements Constants {
     private final BotUtil botUtil;
     private final ButtonCreator buttonCreator;
     private final KeyboardCreator keyboardCreator;
-    private final AnswerTextMaker answerTextMaker;
+    private final AnswerUtil answerUtil;
     private final TicketService ticketService;
     private final VisitorService visitorService;
     private final PerformanceService performanceService;
@@ -45,13 +45,13 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> commandStartReceived(Visitor visitor) {
-        return List.of(botUtil.initNewMessage(visitor.getChatId(), answerTextMaker.welcomeText(visitor)));
+        return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.welcomeText(visitor)));
     }
 
     private List<SendMessage> commandShowMyDataReceived(Visitor visitor) {
         String chatId = visitor.getChatId();
         if (visitor.getState().equals(STATE_EMPTY)) {
-            return List.of(botUtil.initNewMessage(chatId, TEXT_UNREGISTERED_USER_DATA));
+            return List.of(botUtil.initNewMessage(chatId, answerUtil.unregisteredUserData()));
         }
 
         return List.of(botUtil.initNewMessage(chatId,
@@ -60,23 +60,26 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> commandOrderTicketReceived(Visitor visitor) {
-        if (visitor.getState().equals(STATE_REGISTERED)) {
+        if (visitor.isRegistered()) {
             return showUpcomingPerformances(visitor);
         } else {
             visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_ENTERING);
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_REGISTRATION_PHONE_NUMBER));
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.registrationStart()));
         }
     }
 
     private List<SendMessage> commandShowMyTicketsReceived(Visitor visitor) {
-        List<SendMessage> answers = new ArrayList<>();
         List<Ticket> tickets = ticketService.findAllByVisitorId(visitor.getId());
-        String chatId = visitor.getChatId();
 
+        if (tickets.isEmpty()) {
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.ticketsNotFound()));
+        }
+
+        List<SendMessage> answers = new ArrayList<>();
         for (Ticket ticket : tickets) {
             Performance performance = performanceService.findById(ticket.getPerformanceId());
-            answers.add(botUtil.initNewMessage(chatId,
-                    answerTextMaker.getOrderedTicketDescription(ticket, performance),
+            answers.add(botUtil.initNewMessage(visitor.getChatId(),
+                    answerUtil.getOrderedTicketDescription(ticket, performance),
                     keyboardCreator.getOneButtonKeyBoard(buttonCreator.getTicketButton(ticket.getId()))));
         }
 
@@ -97,12 +100,12 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> unSupportedCommandReceived(String chatId) {
-        return List.of(botUtil.initNewMessage(chatId, TEXT_UNSUPPORTED_ACTION));
+        return List.of(botUtil.initNewMessage(chatId, answerUtil.unsupportedAction()));
     }
 
     private List<SendMessage> handlePhoneNumberInput(Visitor visitor, String phoneNumber) {
         if (botUtil.isPhoneNumberInvalid(phoneNumber)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_PHONE_NUMBER_NOT_VALID));
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.phoneNumberInvalid()));
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -111,13 +114,13 @@ public class TextHandler implements Constants {
 
         visitorService.updateVisitor(visitor, STATE_FIRST_NAME_ENTERING, phoneNumber);
 
-        String text = answerTextMaker.phoneNumberEntered(phoneNumber);
+        String text = answerUtil.phoneNumberEntered(phoneNumber);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
     }
 
     private List<SendMessage> handleFirstNameInput(Visitor visitor, String name) {
         if (botUtil.isNameInvalid(name)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NAME_NOT_VALID));
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.nameInvalid()));
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -126,13 +129,13 @@ public class TextHandler implements Constants {
 
         visitorService.updateVisitor(visitor, STATE_LAST_NAME_ENTERING, name);
 
-        String text = answerTextMaker.firstNameEntered(name);
+        String text = answerUtil.firstNameEntered(name);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
     }
 
     private List<SendMessage> handleLastNameInput(Visitor visitor, String name) {
         if (botUtil.isNameInvalid(name)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NAME_NOT_VALID));
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.nameInvalid()));
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -143,19 +146,18 @@ public class TextHandler implements Constants {
 
         List<SendMessage> answers = new ArrayList<>();
 
-        String firstMessageText = answerTextMaker.lastNameEntered(name);
+        String firstMessageText = answerUtil.lastNameEntered(name);
         SendMessage firstMessage = botUtil.initNewMessage(visitor.getChatId(), firstMessageText);
         answers.add(firstMessage);
 
         Optional<LocalDate> optionalPerformanceDate = performanceService.getNextPerformanceDate(LocalDate.now());
         if (optionalPerformanceDate.isPresent()) {
             LocalDate performanceDate = optionalPerformanceDate.get();
-            String secondMessageText = TEXT_CHOSE_PERFORMANCE + performanceDate.format(PERFORMANCE_DATE_FORMAT);
-            List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
-
-            answers.add(botUtil.initNewMessage(visitor.getChatId(), secondMessageText, keyboard));
+            answers.add(botUtil.initNewMessage(visitor.getChatId(),
+                    answerUtil.chosePerformance(performanceDate),
+                    keyboardCreator.getPerformanceKeyboard(performanceDate)));
         } else {
-            firstMessage.setText(firstMessage.getText() + TEXT_NO_UPCOMING_PERFORMANCES);
+            firstMessage.setText(firstMessage.getText() + answerUtil.upcomingPerformancesNotFound());
         }
 
         return answers;
@@ -181,12 +183,12 @@ public class TextHandler implements Constants {
         Optional<LocalDate> optionalPerformanceDate = performanceService.getNextPerformanceDate(LocalDate.now());
         if (optionalPerformanceDate.isPresent()) {
             LocalDate performanceDate = optionalPerformanceDate.get();
-            String text = answerTextMaker.navigationButtonPressed(performanceDate);
+            String text = answerUtil.chosePerformance(performanceDate);
             List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
 
             return List.of(botUtil.initNewMessage(visitor.getChatId(), text, keyboard));
         } else {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), TEXT_NO_UPCOMING_PERFORMANCES));
+            return List.of(botUtil.initNewMessage(visitor.getChatId(), answerUtil.upcomingPerformancesNotFound()));
         }
     }
 }
