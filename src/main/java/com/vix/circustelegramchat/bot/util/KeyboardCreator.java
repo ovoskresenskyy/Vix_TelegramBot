@@ -1,82 +1,87 @@
 package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
-import com.vix.circustelegramchat.model.Performance;
-import com.vix.circustelegramchat.service.PerformanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * This is util class works with keyboards creating.
+ * Here we can get exist keyboard ar create the new one-button keyboard
+ */
 @Component
 @RequiredArgsConstructor
 public class KeyboardCreator implements Constants {
 
-    private final PerformanceService performanceService;
     private final ButtonCreator buttonCreator;
 
-    public List<List<InlineKeyboardButton>> getPerformanceAcceptationButtons(int performanceId) {
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-
-        buttons.add(List.of(
-                buttonCreator.getPerformanceAcceptButton(performanceId),
-                buttonCreator.getChangeMyDataButton()));
-        buttons.add(List.of(buttonCreator.getBackToPerformancesButton()));
-
-        return buttons;
-    }
-
+    /**
+     * This method creates keyboard to navigate exist performances.
+     * Used buttons:
+     * - button for each performance for received date
+     * - navigation buttons
+     *
+     * @param performanceDate - The date of the performance to be added on the buttons
+     * @return - The list of lists of InlineKeyboardButtons
+     */
     public List<List<InlineKeyboardButton>> getPerformanceKeyboard(LocalDate performanceDate) {
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
-        List<Performance> performances = performanceService.getPerformancesByDate(performanceDate);
-        buttons.add(getPerformanceButtons(performances));
-        buttons.add(getNavigationButtons(performanceDate));
+        List<InlineKeyboardButton> firstRow = buttonCreator.getPerformanceButtons(performanceDate);
+        List<InlineKeyboardButton> secondRow = buttonCreator.getNavigationButtons(performanceDate);
 
-        return buttons;
+        return List.of(firstRow, secondRow);
     }
 
-    private List<InlineKeyboardButton> getPerformanceButtons(List<Performance> performances) {
-        List<InlineKeyboardButton> performancesButtons = new ArrayList<>();
+    /**
+     * This method creates keyboard of acceptation of the performance.
+     * Used buttons:
+     * - accept the performance
+     * - change data
+     * - back to performance to choose another
+     *
+     * @param performanceId - The ID of performance to be accepted
+     * @return - The list of lists of InlineKeyboardButtons
+     */
+    public List<List<InlineKeyboardButton>> getPerformanceAcceptationKeyboard(int performanceId) {
+        InlineKeyboardButton performanceAcceptButton = buttonCreator.getPerformanceAcceptButton(performanceId);
+        InlineKeyboardButton changeMyDataButton = buttonCreator.getChangeMyDataButton();
+        InlineKeyboardButton backToPerformancesButton = buttonCreator.getBackToPerformancesButton();
 
-        for (Performance performance : performances) {
-            String buttonName = "'" + performance.getName() + "'" + " - " + performance.getTime();
-            String buttonCBD = CBD_SELECTED_PERFORMANCE_ID_ + performance.getId();
-            performancesButtons.add(buttonCreator.getCustomButton(buttonName, buttonCBD));
-        }
+        List<InlineKeyboardButton> firstRow = List.of(performanceAcceptButton, changeMyDataButton);
+        List<InlineKeyboardButton> secondRow = List.of(backToPerformancesButton);
 
-        return performancesButtons;
+        return List.of(firstRow, secondRow);
     }
 
-    private List<InlineKeyboardButton> getNavigationButtons(LocalDate currentDate) {
-        List<InlineKeyboardButton> navigationButtons = new ArrayList<>();
-
-        Optional<LocalDate> optionalPreviousDate = performanceService.getPreviousPerformanceDate(currentDate);
-        if (optionalPreviousDate.isPresent()) {
-            String previousDate = CBD_SHOW_PERFORMANCES_DATE_ + optionalPreviousDate.get();
-            navigationButtons.add(buttonCreator.getCustomButton(BUTTON_SHOW_PREVIOUS_DATE, previousDate));
-        }
-
-        Optional<LocalDate> optionalNextDate = performanceService.getNextPerformanceDate(currentDate);
-        if (optionalNextDate.isPresent()) {
-            String nextDate = CBD_SHOW_PERFORMANCES_DATE_ + optionalNextDate.get();
-            navigationButtons.add(buttonCreator.getCustomButton(BUTTON_SHOW_NEXT_DATE, nextDate));
-        }
-
-        return navigationButtons;
-    }
-
+    /**
+     * This method is responsible for creating the keyboard with buttons for changing the users data
+     * Used buttons:
+     * - change first name
+     * - change last name
+     * - change phone number
+     *
+     * @return - The list of lists of InlineKeyboardButtons
+     */
     public List<List<InlineKeyboardButton>> getChangeDataKeyboard() {
-        return List.of(
-                List.of(buttonCreator.getChangeFirstNameButton(), buttonCreator.getChangeLastNameButton()),
-                List.of(buttonCreator.getChangePhoneNumberButton()));
+        InlineKeyboardButton changeFirstNameButton = buttonCreator.getChangeFirstNameButton();
+        InlineKeyboardButton changeLastNameButton = buttonCreator.getChangeLastNameButton();
+        InlineKeyboardButton changePhoneNumberButton = buttonCreator.getChangePhoneNumberButton();
+
+        List<InlineKeyboardButton> firstRow = List.of(changeFirstNameButton, changeLastNameButton);
+        List<InlineKeyboardButton> secondRow = List.of(changePhoneNumberButton);
+
+        return List.of(firstRow, secondRow);
     }
 
+    /**
+     * This method is responsible for creating simple 1-button keyboard
+     *
+     * @param button - The button to be set in a keyboard
+     * @return - The One-Button keybaord
+     */
     public List<List<InlineKeyboardButton>> getOneButtonKeyBoard(InlineKeyboardButton button) {
         return List.of(List.of(button));
     }
-
 }

@@ -1,7 +1,7 @@
 package com.vix.circustelegramchat.bot.handler;
 
 import com.vix.circustelegramchat.bot.Constants;
-import com.vix.circustelegramchat.bot.util.AnswerUtil;
+import com.vix.circustelegramchat.bot.util.ReplyUtil;
 import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.bot.util.ButtonCreator;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
@@ -25,7 +25,7 @@ public class CallBackDataHandler implements Constants {
     private final BotUtil botUtil;
     private final ButtonCreator buttonCreator;
     private final KeyboardCreator keyboardCreator;
-    private final AnswerUtil answerUtil;
+    private final ReplyUtil replyUtil;
     private final PerformanceService performanceService;
     private final TicketService ticketService;
     private final VisitorService visitorService;
@@ -42,17 +42,17 @@ public class CallBackDataHandler implements Constants {
 
     private EditMessageText changePhoneNumberButtonPressed(Visitor visitor, Message message) {
         visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_CHANGING);
-        return botUtil.initNewEditMessageText(message, answerUtil.phoneNumberChanging());
+        return botUtil.initNewEditMessageText(message, replyUtil.phoneNumberChanging());
     }
 
     private EditMessageText changeLastNameButtonPressed(Visitor visitor, Message message) {
         visitorService.updateVisitor(visitor, STATE_LAST_NAME_CHANGING);
-        return botUtil.initNewEditMessageText(message, answerUtil.lastNameChanging());
+        return botUtil.initNewEditMessageText(message, replyUtil.lastNameChanging());
     }
 
     private EditMessageText changeFirstNameButtonPressed(Visitor visitor, Message message) {
         visitorService.updateVisitor(visitor, STATE_FIRST_NAME_CHANGING);
-        return botUtil.initNewEditMessageText(message, answerUtil.firstNameChanging());
+        return botUtil.initNewEditMessageText(message, replyUtil.firstNameChanging());
     }
 
     private EditMessageText changeMyDataButtonPressed(Message message) {
@@ -83,7 +83,7 @@ public class CallBackDataHandler implements Constants {
                 .build());
 
         return botUtil.initNewEditMessageText(message,
-                answerUtil.ticketOrdered(),
+                replyUtil.ticketOrdered(),
                 keyboardCreator.getOneButtonKeyBoard(buttonCreator.getTicketButton(ticket.getId())));
     }
 
@@ -92,15 +92,15 @@ public class CallBackDataHandler implements Constants {
         Performance performance = performanceService.findById(performanceId);
 
         return botUtil.initNewEditMessageText(message,
-                answerUtil.performanceSelected(visitor, performance),
-                keyboardCreator.getPerformanceAcceptationButtons(performanceId));
+                replyUtil.performanceSelected(visitor, performance),
+                keyboardCreator.getPerformanceAcceptationKeyboard(performanceId));
     }
 
     private EditMessageText navigationButtonPressed(Message message, String callBackData) {
         LocalDate performanceDate = botUtil.extractDate(callBackData);
 
         return botUtil.initNewEditMessageText(message,
-                answerUtil.chosePerformance(performanceDate),
+                replyUtil.chosePerformance(performanceDate),
                 keyboardCreator.getPerformanceKeyboard(performanceDate));
     }
 
@@ -108,7 +108,7 @@ public class CallBackDataHandler implements Constants {
         return EditMessageText.builder()
                 .chatId(message.getChatId())
                 .messageId(message.getMessageId())
-                .text(answerUtil.unsupportedAction())
+                .text(replyUtil.unsupportedAction())
                 .build();
     }
 
