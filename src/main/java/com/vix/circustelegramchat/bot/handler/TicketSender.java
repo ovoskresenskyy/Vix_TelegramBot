@@ -4,7 +4,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.bot.Constants;
 import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
@@ -20,6 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This class is responsible for handling request from user to send the ticket.
@@ -29,7 +30,6 @@ import java.io.IOException;
 @Slf4j
 public class TicketSender implements Constants {
 
-    private final BotUtil botUtil;
     private final TicketService ticketService;
     private final PerformanceService performanceService;
 
@@ -61,7 +61,10 @@ public class TicketSender implements Constants {
     private File getPDFTicket(Ticket ticket, Performance performance) {
 
         Document document = new Document();
-        File ticketPDF = new File(getTicketName(ticket.getId(), performance));
+
+        File directory = getTicketsDirectory();
+        String ticketName = getTicketName(ticket.getId(), performance);
+        File ticketPDF = new File(directory, ticketName);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(ticketPDF);
             PdfWriter.getInstance(document, fileOutputStream);
@@ -112,15 +115,33 @@ public class TicketSender implements Constants {
     }
 
     /**
-     * This method prepares the destination of new file of the ticket
+     * This method is responsible for getting directory where asked tickets will be saved
      *
-     * @param ticketId    - ID of ticket on the basis of which the file destination will be made
-     * @param performance - Performance on the basis of which the file destination will be made
-     * @return The file destination for the PDF file ticket
+     * @return Directory, where tickets will be saved
+     */
+    private File getTicketsDirectory() {
+        Path directory = Path.of(TICKETS_DIRECTORY);
+
+        if (!Files.exists(directory) || Files.isDirectory(directory)) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                log.error("Error while creating tickets directory: " + e.getMessage());
+            }
+        }
+
+        return new File(TICKETS_DIRECTORY);
+    }
+
+    /**
+     * This method prepares the name of new file of the ticket
+     *
+     * @param ticketId    - ID of ticket on the basis of which the file name will be made
+     * @param performance - Performance on the basis of which the file name will be made
+     * @return The file name for the PDF file ticket
      */
     private String getTicketName(int ticketId, Performance performance) {
-        return "tickets"
-                + File.separator
+        return File.separator
                 + ticketId
                 + "_" + performance.getName()
                 + "_" + performance.getDate()

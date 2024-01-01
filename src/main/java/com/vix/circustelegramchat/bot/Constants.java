@@ -95,4 +95,9 @@ public interface Constants {
      */
     String PHONE_NUMBER_FORMAT = "\\d{10}";
     String NAME_FORMAT = "[A-Z](?=.{1,29}$)[A-Za-z]+( [A-Z][A-Za-z]+)*";
+
+    /**
+     * The directory of queried tickets
+     */
+    String TICKETS_DIRECTORY = "tickets";
 }

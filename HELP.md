@@ -20,3 +20,11 @@ of imagine circus.
 * [Flyway Core](https://mvnrepository.com/artifact/org.flywaydb/flyway-core/)
 * [Telegram Bots](https://mvnrepository.com/artifact/org.telegram/telegrambots/)
 
+### How to start
+
+This bot uses PostgreSQL, so it's required.
+Also check if you have enough rights. 
+The application will create a directory for storing tickets and will store all requested files in it.
+
+Everything else will be made automatically. Enjoy.
+
