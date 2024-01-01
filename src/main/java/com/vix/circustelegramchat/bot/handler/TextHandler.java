@@ -147,15 +147,20 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> connectOperator(Visitor visitor) {
+        String textReply;
+        String chatId = visitor.getChatId();
+
         if (visitor.getOperatorChatId().isEmpty()) {
             Operator operator = operatorService.getRandomOperator();
             visitor.setOperatorChatId(operator.getChatId());
             visitorService.save(visitor);
 
-            String textReply = replyUtil.operatorConnected(operator);
-            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
+            textReply = replyUtil.operatorConnected(operator);
+        } else {
+            textReply = replyUtil.operatorAlreadyConnected();
         }
-        return null;
+
+        return botUtil.getSingleMessageReply(chatId, textReply);
     }
 
     /**
@@ -169,12 +174,17 @@ public class TextHandler implements Constants {
      * or UnsupportedCommand message if it can't handle input.
      */
     private List<SendMessage> handleUserInput(Visitor visitor, String text) {
-        return switch (visitor.getState()) {
-            case STATE_PHONE_NUMBER_ENTERING, STATE_PHONE_NUMBER_CHANGING -> handlePhoneNumberInput(visitor, text);
-            case STATE_FIRST_NAME_ENTERING, STATE_FIRST_NAME_CHANGING -> handleFirstNameInput(visitor, text);
-            case STATE_LAST_NAME_ENTERING, STATE_LAST_NAME_CHANGING -> handleLastNameInput(visitor, text);
-            default -> unSupportedCommandReceived(visitor);
-        };
+        if (visitor.getOperatorChatId().isEmpty()) {
+            return switch (visitor.getState()) {
+                case STATE_PHONE_NUMBER_ENTERING, STATE_PHONE_NUMBER_CHANGING -> handlePhoneNumberInput(visitor, text);
+                case STATE_FIRST_NAME_ENTERING, STATE_FIRST_NAME_CHANGING -> handleFirstNameInput(visitor, text);
+                case STATE_LAST_NAME_ENTERING, STATE_LAST_NAME_CHANGING -> handleLastNameInput(visitor, text);
+                default -> unSupportedCommandReceived(visitor);
+            };
+        } else {
+            String operatorChatId = visitor.getOperatorChatId();
+            return botUtil.getSingleMessageReply(operatorChatId, text);
+        }
     }
 
     /**

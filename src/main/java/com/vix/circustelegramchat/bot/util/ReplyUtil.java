@@ -258,9 +258,24 @@ public class ReplyUtil implements Constants {
                 + ticket.getVisitorFirstName() + " " + ticket.getVisitorLastName();
     }
 
+    /**
+     * This method is making reply with greeting from connected operator
+     *
+     * @param operator - Operator, who was connected previously
+     * @return - Reply text
+     */
     public String operatorConnected(Operator operator) {
         return "Hi! My name is "
                 + operator.getName()
                 + ".\nHow can I help you?";
+    }
+
+    /**
+     * This method is making reply with info that user is already chatting with the operator
+     *
+     * @return - Reply text
+     */
+    public String operatorAlreadyConnected() {
+        return "You are already chatting with the operator. I can't connect another one.";
     }
 }

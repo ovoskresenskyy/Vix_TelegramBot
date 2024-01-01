@@ -35,6 +35,7 @@ public class VisitorService implements Constants {
         return visitorRepository.findByChatId(chatId)
                 .orElseGet(() -> Visitor.builder()
                         .chatId(chatId)
+                        .operatorChatId("")
                         .state(STATE_EMPTY)
                         .build());
     }
