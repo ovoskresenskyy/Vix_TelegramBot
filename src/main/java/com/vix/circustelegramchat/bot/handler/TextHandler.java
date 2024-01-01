@@ -71,7 +71,8 @@ public class TextHandler implements Constants {
      * @return New SendMessage with greetings and list of supported commands
      */
     private List<SendMessage> commandStartReceived(Visitor visitor) {
-        return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.welcomeText(visitor)));
+        String textReply = replyUtil.welcomeText(visitor);
+        return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
     }
 
     /**
@@ -83,12 +84,13 @@ public class TextHandler implements Constants {
     private List<SendMessage> commandShowMyDataReceived(Visitor visitor) {
         String chatId = visitor.getChatId();
         if (visitor.getState().equals(STATE_EMPTY)) {
-            return List.of(botUtil.initNewMessage(chatId, replyUtil.unregisteredUserData()));
+            String textReply = replyUtil.unregisteredUserData();
+            return botUtil.getSingleMessageReply(chatId, textReply);
         }
 
-        return List.of(botUtil.initNewMessage(chatId,
+        return botUtil.getSingleMessageReply(chatId,
                 visitor.toString(),
-                keyboardCreator.getOneButtonKeyBoard(buttonCreator.getChangeMyDataButton())));
+                keyboardCreator.getOneButtonKeyBoard(buttonCreator.getChangeMyDataButton()));
     }
 
     /**
@@ -104,7 +106,9 @@ public class TextHandler implements Constants {
         } else {
             visitor.setState(STATE_PHONE_NUMBER_ENTERING);
             visitorService.save(visitor);
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.registrationStart()));
+
+            String textReply = replyUtil.registrationStart();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
     }
 
@@ -118,7 +122,8 @@ public class TextHandler implements Constants {
         List<Ticket> tickets = ticketService.findAllByVisitorId(visitor.getId());
 
         if (tickets.isEmpty()) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.ticketsNotFound()));
+            String textReply = replyUtil.ticketsNotFound();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
 
         List<SendMessage> answers = new ArrayList<>();
@@ -160,8 +165,8 @@ public class TextHandler implements Constants {
      *
      * @param visitor - The user who send the command or input a text
      * @param text    - Entered text by the user
-     * @return One or a few messages according to the users input or UnsupportedCommand message
-     * if can't handle input.
+     * @return One or a few messages according to the users input
+     * or UnsupportedCommand message if it can't handle input.
      */
     private List<SendMessage> handleUserInput(Visitor visitor, String text) {
         return switch (visitor.getState()) {
@@ -183,7 +188,8 @@ public class TextHandler implements Constants {
      */
     private List<SendMessage> handlePhoneNumberInput(Visitor visitor, String phoneNumber) {
         if (botUtil.isPhoneNumberInvalid(phoneNumber)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.phoneNumberInvalid()));
+            String textReply = replyUtil.phoneNumberInvalid();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -194,8 +200,8 @@ public class TextHandler implements Constants {
         visitor.setState(STATE_FIRST_NAME_ENTERING);
         visitorService.save(visitor);
 
-        String text = replyUtil.phoneNumberEntered(phoneNumber);
-        return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
+        String textReply = replyUtil.phoneNumberEntered(phoneNumber);
+        return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
     }
 
     /**
@@ -209,7 +215,8 @@ public class TextHandler implements Constants {
      */
     private List<SendMessage> handleFirstNameInput(Visitor visitor, String name) {
         if (botUtil.isNameInvalid(name)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.nameInvalid()));
+            String textReply = replyUtil.nameInvalid();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -220,8 +227,8 @@ public class TextHandler implements Constants {
         visitor.setState(STATE_LAST_NAME_ENTERING);
         visitorService.save(visitor);
 
-        String text = replyUtil.firstNameEntered(name);
-        return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
+        String textReply = replyUtil.firstNameEntered(name);
+        return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
     }
 
     /**
@@ -235,7 +242,8 @@ public class TextHandler implements Constants {
      */
     private List<SendMessage> handleLastNameInput(Visitor visitor, String name) {
         if (botUtil.isNameInvalid(name)) {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.nameInvalid()));
+            String textReply = replyUtil.nameInvalid();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
 
         if (isDataChanging(visitor.getState())) {
@@ -272,7 +280,8 @@ public class TextHandler implements Constants {
      * @return New message with UnsupportedAction information
      */
     private List<SendMessage> unSupportedCommandReceived(Visitor visitor) {
-        return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.unsupportedAction()));
+        String textReply = replyUtil.unsupportedAction();
+        return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
     }
 
     /**
@@ -320,12 +329,13 @@ public class TextHandler implements Constants {
         Optional<LocalDate> optionalPerformanceDate = performanceService.getNextPerformanceDate(LocalDate.now());
         if (optionalPerformanceDate.isPresent()) {
             LocalDate performanceDate = optionalPerformanceDate.get();
-            String text = replyUtil.chosePerformance(performanceDate);
+            String textReply = replyUtil.chosePerformance(performanceDate);
             List<List<InlineKeyboardButton>> keyboard = keyboardCreator.getPerformanceKeyboard(performanceDate);
 
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), text, keyboard));
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply, keyboard);
         } else {
-            return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.upcomingPerformancesNotFound()));
+            String textReply = replyUtil.upcomingPerformancesNotFound();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
         }
     }
 }

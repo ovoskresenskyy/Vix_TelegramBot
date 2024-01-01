@@ -87,6 +87,33 @@ public class BotUtil implements Constants {
     }
 
     /**
+     * This method is responsible for initialize one message reply
+     * with only one new SendMessage without keyboard
+     *
+     * @param chatId - ChatId of new SendMessage
+     * @param text   - Text of new SendMessage
+     * @return The new SendMessage with only text inside
+     */
+    public List<SendMessage> getSingleMessageReply(String chatId, String text) {
+        return List.of(initNewMessage(chatId, text));
+    }
+
+    /**
+     * This method is responsible for initialize one message reply
+     * with only one new SendMessage with text and keyboard
+     *
+     * @param chatId   - ChatId of new SendMessage
+     * @param text     - Text of new SendMessage
+     * @param keyboard - Buttons of Inline keyboard
+     * @return The new SendMessage with text and keyboard inside
+     */
+    public List<SendMessage> getSingleMessageReply(String chatId,
+                                                   String text,
+                                                   Collection<? extends List<InlineKeyboardButton>> keyboard) {
+        return List.of(initNewMessage(chatId, text, keyboard));
+    }
+
+    /**
      * This method is responsible for initialize new EditMessageText without keyboard
      *
      * @param message - Message to be edited

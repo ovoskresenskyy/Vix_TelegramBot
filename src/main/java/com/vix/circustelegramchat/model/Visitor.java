@@ -28,6 +28,8 @@ public class Visitor {
     @Column(name = "chat_id", unique = true)
     private String chatId;
     private String state;
+    @Column(name = "operator_chat_id")
+    private String operatorChatId;
 
     @Override
     public String toString() {
