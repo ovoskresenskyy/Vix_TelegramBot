@@ -1,6 +1,7 @@
 package com.vix.circustelegramchat.bot.util;
 
 import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Operator;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
 import com.vix.circustelegramchat.model.Visitor;
@@ -197,6 +198,16 @@ public class ReplyUtil implements Constants {
     }
 
     /**
+     * This method is making reply for unregistered user when it tries to chat with operator.
+     * For our logic it's possible only after ordering tickets, or at least registering
+     *
+     * @return - Reply text
+     */
+    public String unregisteredUserOperatorQuery() {
+        return "To chat with operator you have to order ticket.";
+    }
+
+    /**
      * This method is making reply of unsupported action.
      *
      * @return - Reply text
@@ -245,5 +256,11 @@ public class ReplyUtil implements Constants {
                 + "\n" + performance.toString()
                 + "\n\nVisitor: "
                 + ticket.getVisitorFirstName() + " " + ticket.getVisitorLastName();
+    }
+
+    public String operatorConnected(Operator operator) {
+        return "Hi! My name is "
+                + operator.getName()
+                + ".\nHow can I help you?";
     }
 }

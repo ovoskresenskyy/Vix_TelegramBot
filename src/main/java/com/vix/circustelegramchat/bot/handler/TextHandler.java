@@ -5,9 +5,11 @@ import com.vix.circustelegramchat.bot.util.BotUtil;
 import com.vix.circustelegramchat.bot.util.ButtonCreator;
 import com.vix.circustelegramchat.bot.util.KeyboardCreator;
 import com.vix.circustelegramchat.bot.Constants;
+import com.vix.circustelegramchat.model.Operator;
 import com.vix.circustelegramchat.model.Visitor;
 import com.vix.circustelegramchat.model.Performance;
 import com.vix.circustelegramchat.model.Ticket;
+import com.vix.circustelegramchat.service.OperatorService;
 import com.vix.circustelegramchat.service.VisitorService;
 import com.vix.circustelegramchat.service.PerformanceService;
 import com.vix.circustelegramchat.service.TicketService;
@@ -38,6 +40,7 @@ public class TextHandler implements Constants {
     private final ReplyUtil replyUtil;
     private final TicketService ticketService;
     private final VisitorService visitorService;
+    private final OperatorService operatorService;
     private final PerformanceService performanceService;
 
     /**
@@ -130,6 +133,23 @@ public class TextHandler implements Constants {
     }
 
     private List<SendMessage> commandOperatorReceived(Visitor visitor) {
+        if (visitor.isRegistered()) {
+            return connectOperator(visitor);
+        } else {
+            String textReply = replyUtil.unregisteredUserOperatorQuery();
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
+        }
+    }
+
+    private List<SendMessage> connectOperator(Visitor visitor) {
+        if (visitor.getOperatorChatId().isEmpty()) {
+            Operator operator = operatorService.getRandomOperator();
+            visitor.setOperatorChatId(operator.getChatId());
+            visitorService.save(visitor);
+
+            String textReply = replyUtil.operatorConnected(operator);
+            return botUtil.getSingleMessageReply(visitor.getChatId(), textReply);
+        }
         return null;
     }
 

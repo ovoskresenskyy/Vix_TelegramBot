@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS visitor
     phone_number text,
     chat_id text,
     state text,
+    operator_chat_id text,
     PRIMARY KEY (id)
 );
 
