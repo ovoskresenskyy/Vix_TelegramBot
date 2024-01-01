@@ -116,17 +116,16 @@ public class ButtonCreator implements Constants {
      * @param performanceDate - The date of the performances
      * @return - List of InlineKeyboardButton with the performances
      */
-    public List<InlineKeyboardButton> getPerformanceButtons(LocalDate performanceDate) {
-        List<InlineKeyboardButton> performancesButtons = new ArrayList<>();
+    public List<List<InlineKeyboardButton>> getPerformanceButtons(LocalDate performanceDate) {
         List<Performance> performances = performanceService.getPerformancesByDate(performanceDate);
 
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         for (Performance performance : performances) {
             String buttonName = "'" + performance.getName() + "'" + " - " + performance.getTime();
             String buttonCBD = CBD_SELECTED_PERFORMANCE_ID_ + performance.getId();
-            performancesButtons.add(getButton(buttonName, buttonCBD));
+            keyboard.add(List.of(getButton(buttonName, buttonCBD)));
         }
-
-        return performancesButtons;
+        return keyboard;
     }
 
     /**

@@ -28,10 +28,9 @@ public class KeyboardCreator implements Constants {
      * @return - The list of lists of InlineKeyboardButtons
      */
     public List<List<InlineKeyboardButton>> getPerformanceKeyboard(LocalDate performanceDate) {
-        List<InlineKeyboardButton> firstRow = buttonCreator.getPerformanceButtons(performanceDate);
-        List<InlineKeyboardButton> secondRow = buttonCreator.getNavigationButtons(performanceDate);
-
-        return List.of(firstRow, secondRow);
+        List<List<InlineKeyboardButton>> keyboard = buttonCreator.getPerformanceButtons(performanceDate);
+        keyboard.add(buttonCreator.getNavigationButtons(performanceDate));
+        return keyboard;
     }
 
     /**
