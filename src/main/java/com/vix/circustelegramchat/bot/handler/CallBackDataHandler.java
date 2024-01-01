@@ -79,7 +79,8 @@ public class CallBackDataHandler implements Constants {
      * @return Edited message with asking to enter new data
      */
     private EditMessageText changeFirstNameButtonPressed(Visitor visitor, Message message) {
-        visitorService.updateVisitor(visitor, STATE_FIRST_NAME_CHANGING);
+        visitor.setState(STATE_FIRST_NAME_CHANGING);
+        visitorService.save(visitor);
         return botUtil.initNewEditMessageText(message, replyUtil.firstNameChanging());
     }
 
@@ -92,7 +93,8 @@ public class CallBackDataHandler implements Constants {
      * @return Edited message with asking to enter new data
      */
     private EditMessageText changeLastNameButtonPressed(Visitor visitor, Message message) {
-        visitorService.updateVisitor(visitor, STATE_LAST_NAME_CHANGING);
+        visitor.setState(STATE_LAST_NAME_CHANGING);
+        visitorService.save(visitor);
         return botUtil.initNewEditMessageText(message, replyUtil.lastNameChanging());
     }
 
@@ -105,7 +107,8 @@ public class CallBackDataHandler implements Constants {
      * @return Edited message with asking to enter new data
      */
     private EditMessageText changePhoneNumberButtonPressed(Visitor visitor, Message message) {
-        visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_CHANGING);
+        visitor.setState(STATE_PHONE_NUMBER_CHANGING);
+        visitorService.save(visitor);
         return botUtil.initNewEditMessageText(message, replyUtil.phoneNumberChanging());
     }
 

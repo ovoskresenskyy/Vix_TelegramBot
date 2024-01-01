@@ -99,7 +99,8 @@ public class TextHandler implements Constants {
         if (visitor.isRegistered()) {
             return showUpcomingPerformances(visitor);
         } else {
-            visitorService.updateVisitor(visitor, STATE_PHONE_NUMBER_ENTERING);
+            visitor.setState(STATE_PHONE_NUMBER_ENTERING);
+            visitorService.save(visitor);
             return List.of(botUtil.initNewMessage(visitor.getChatId(), replyUtil.registrationStart()));
         }
     }
@@ -169,7 +170,9 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, phoneNumber);
         }
 
-        visitorService.updateVisitor(visitor, STATE_FIRST_NAME_ENTERING, phoneNumber);
+        visitor.setPhoneNumber(phoneNumber);
+        visitor.setState(STATE_FIRST_NAME_ENTERING);
+        visitorService.save(visitor);
 
         String text = replyUtil.phoneNumberEntered(phoneNumber);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -193,7 +196,9 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, name);
         }
 
-        visitorService.updateVisitor(visitor, STATE_LAST_NAME_ENTERING, name);
+        visitor.setFirstName(name);
+        visitor.setState(STATE_LAST_NAME_ENTERING);
+        visitorService.save(visitor);
 
         String text = replyUtil.firstNameEntered(name);
         return List.of(botUtil.initNewMessage(visitor.getChatId(), text));
@@ -217,7 +222,9 @@ public class TextHandler implements Constants {
             return updateVisitorData(visitor, name);
         }
 
-        visitorService.updateVisitor(visitor, STATE_REGISTERED, name);
+        visitor.setLastName(name);
+        visitor.setState(STATE_REGISTERED);
+        visitorService.save(visitor);
 
         List<SendMessage> answers = new ArrayList<>();
 
@@ -249,8 +256,7 @@ public class TextHandler implements Constants {
     }
 
     /**
-     * This method is responsible updating visitors data if
-     * it decides to change something
+     * This method is responsible updating visitors data if it decides to change something
      * It can change phone number, first and last names and then change the state to Registered.
      * Because it's only one field changing.
      *
@@ -265,7 +271,8 @@ public class TextHandler implements Constants {
             case STATE_FIRST_NAME_CHANGING -> visitor.setFirstName(newValue);
             case STATE_LAST_NAME_CHANGING -> visitor.setLastName(newValue);
         }
-        visitorService.updateVisitor(visitor, STATE_REGISTERED);
+        visitor.setState(STATE_REGISTERED);
+        visitorService.save(visitor);
         return commandShowMyDataReceived(visitor);
     }
 

@@ -38,33 +38,4 @@ public class VisitorService implements Constants {
                         .state(STATE_EMPTY)
                         .build());
     }
-
-    /**
-     * This util method is helps with changing state and matched field.
-     *
-     * @param visitor - The visitor to be processed
-     * @param state   - The new state to be saved
-     * @param text    - Text of new value to be saved according to the current state
-     */
-    public void updateVisitor(Visitor visitor, String state, String text) {
-        switch (state) {
-            case STATE_PHONE_NUMBER_ENTERING -> visitor.setPhoneNumber(text);
-            case STATE_FIRST_NAME_ENTERING -> visitor.setFirstName(text);
-            case STATE_LAST_NAME_ENTERING -> visitor.setLastName(text);
-        }
-
-        visitor.setState(state);
-        save(visitor);
-    }
-
-    /**
-     * This overloaded method is calls another without changing values of fields.
-     * Just to change the state.
-     *
-     * @param visitor - The visitor to be processed
-     * @param state   - The new state to be saved
-     */
-    public void updateVisitor(Visitor visitor, String state) {
-        updateVisitor(visitor, state, "");
-    }
 }
