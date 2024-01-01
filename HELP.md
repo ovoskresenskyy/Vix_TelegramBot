@@ -1,19 +1,22 @@
-# Getting Started
+# What is Vix Telegram Bot
 
-### Reference Documentation
+Vix Telegram Bot is a Spring Boot based app that imitate service of ticket ordering
+of imagine circus.
 
-For further reference, please consider the following sections:
+### Features
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.2.0/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.2.0/maven-plugin/reference/html/#build-image)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.2.0/reference/htmlsingle/index.html#web)
+- Registering and changing your data after that
+- Looking through all available performances
+- Choosing passed one and getting PDF file of it
+- Chatting with the operator
 
-### Guides
+### Used libraries
 
-The following guides illustrate how to use some features concretely:
-
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+* [Spring Boot Starter Web](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web/)
+* [Spring Boot Starter Data JPA](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa/)
+* [IText Core](https://mvnrepository.com/artifact/com.itextpdf/itextpdf/)
+* [Project Lombok](https://mvnrepository.com/artifact/org.projectlombok/lombok/)
+* [PostgreSQL JDBC Driver](https://mvnrepository.com/artifact/org.postgresql/postgresql/)
+* [Flyway Core](https://mvnrepository.com/artifact/org.flywaydb/flyway-core/)
+* [Telegram Bots](https://mvnrepository.com/artifact/org.telegram/telegrambots/)
 
